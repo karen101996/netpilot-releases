@@ -1,10 +1,19 @@
 {
-  "version": "1.2.5",
+  "version": "1.3.0",
   "channel": "stable",
   "files": {
     "install.ps1": "b624660f13d7d8af6305d8ee8b4c445be4c9ce1d",
-    "telnet_manager.py": "a05453c3db03780c88b841ca10c672c57b4e7b29",
+    "telnet_manager.py": "2db301de6a8d1087b3eefdac572c24c2b665d12e",
     "requirements.txt": "8f79282c550c6e40adc8b7b8becf93fd9e642277",
-    "update.ps1": "3243ca849cf9238d75c1461ab34d8ec273599925"
-  }
+    "update.ps1": "cca9ddbaebb2eb40bdc9791393c9bf56595c2785"
+  },
+  "changes": [
+    "+ Device address book: t add NAME IP",
+    "+ List saved devices: t list",
+    "+ Search saved devices: t search QUERY",
+    "+ Connect by alias: t NAME",
+    "* Existing IP credentials remain unchanged",
+    "* Fixed update notice formatting",
+    "* Future updates display release notes after installation"
+  ]
 }
