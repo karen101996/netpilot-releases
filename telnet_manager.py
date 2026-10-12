@@ -34,6 +34,7 @@ RESERVED = {"add", "list", "search", "help", "ping", "backup", "history", "updat
 
 PROTOCOLS = BASE / "device_protocols.json"
 SSH_USERS = BASE / "ssh_users.json"
+SSH_PASSWORDS = BASE / "ssh_passwords.json"
 LAUNCHER_DIR = Path.home() / "bin"
 WINDOWS_COMMANDS = {"cmd", "powershell", "pwsh", "explorer", "control", "regedit",
                     "notepad", "calc", "taskmgr", "services", "msconfig", "mstsc",
@@ -415,18 +416,32 @@ async def connect(ip, port=23, reset=False):
 
 
 def ssh_connect(ip, port=22, username=None):
-    """Use Windows OpenSSH: native terminal, host-key verification and key auth."""
-    ssh = shutil.which("ssh.exe") or shutil.which("ssh")
-    if not ssh:
-        raise RuntimeError("OpenSSH Client not found. Install Windows OpenSSH Client.")
-    destination = f"{username}@{ip}" if username else ip
+    """Connect with a saved, DPAPI-protected SSH password."""
+    from ssh_password import connect as password_connect
+    username = username or "admin"
+    key = f"{username}@{ip}:{port}"
+    saved = json.loads(SSH_PASSWORDS.read_text(encoding="utf-8")) if SSH_PASSWORDS.exists() else {}
+    password = None
+    if key in saved:
+        try:
+            password = decrypt(saved[key])
+        except (ValueError, TypeError, OSError):
+            print("Cannot decrypt SSH password; enter it again.")
+    if password is None:
+        password = getpass.getpass(f"SSH password for {username}@{ip}: ")
     check_updates()
-    print(f"SSH connecting to {destination}:{port}...")
-    result = subprocess.run([ssh, "-o", "StrictHostKeyChecking=ask",
-                             "-o", "UserKnownHostsFile=" + str(Path.home() / ".ssh" / "known_hosts"),
-                             "-p", str(port), destination], check=False)
-    if result.returncode:
-        print(f"SSH exited with status {result.returncode}")
+    def save_on_authentication():
+        if key not in saved:
+            saved[key] = encrypt(password)
+            _save_json(SSH_PASSWORDS, saved)
+            print("SSH password saved securely.")
+    try:
+        password_connect(ip, port, username, password, BASE / "ssh_known_hosts",
+                         on_authenticated=save_on_authentication)
+    except Exception as exc:
+        print(f"SSH connection failed: {exc}")
+        return
+
 
 SETTINGS = BASE / "settings.json"
 LANGUAGES = ("ru", "en", "uz")
