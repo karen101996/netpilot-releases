@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="assets/netpilot-banner.svg" alt="NetPilot — Fast Telnet access for Windows" width="100%" />
+
 # NetPilot
 
 ### Fast Telnet access for Windows network administrators
