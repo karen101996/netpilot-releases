@@ -72,7 +72,7 @@ if ($LASTEXITCODE -ne 0) { throw 'Failed to create Python environment.' }
 $venvPython = Join-Path $venv 'Scripts\python.exe'
 & $venvPython -m pip install --disable-pip-version-check -r (Join-Path $PSScriptRoot 'requirements.txt')
 if ($LASTEXITCODE -ne 0) { throw 'Dependency installation failed; existing installation was not switched.' }
-& $venvPython -m py_compile (Join-Path $PSScriptRoot 'telnet_manager.py')
+& $venvPython -m py_compile (Join-Path $PSScriptRoot 'telnet_manager.py') (Join-Path $PSScriptRoot 'ssh_password.py')
 if ($LASTEXITCODE -ne 0) { throw 'Python syntax check failed; existing installation was not switched.' }
 
 # Back up existing legacy script and current NetPilot script before replacing either.
@@ -85,6 +85,7 @@ if (Test-Path $legacy) {
   Copy-Item $legacy (Join-Path $backupDir "legacy-t-$stamp.bat") -Force
 }
 Copy-Item (Join-Path $PSScriptRoot 'telnet_manager.py') $current -Force
+Copy-Item (Join-Path $PSScriptRoot 'ssh_password.py') (Join-Path $root 'ssh_password.py') -Force
 Copy-Item (Join-Path $PSScriptRoot 'version.json') (Join-Path $root 'version.json') -Force
 Copy-Item (Join-Path $PSScriptRoot 'update.ps1') (Join-Path $root 'update.ps1') -Force
 
