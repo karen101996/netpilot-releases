@@ -50,7 +50,20 @@ try {
   Write-Host "Verified release $($manifest.version). Installing..." -ForegroundColor Cyan
   & powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $staging 'install.ps1')
   if ($LASTEXITCODE -ne 0) { throw 'Installer failed; check output.' }
-  Write-Host "NetPilot updated to $($manifest.version)." -ForegroundColor Green
+  Write-Host ""
+  Write-Host "NetPilot updated successfully!" -ForegroundColor Green
+  Write-Host "Version: $installedVersion -> $($manifest.version)"
+  $changes = @($manifest.changes | Where-Object { $_ -is [string] -and $_.Trim() })
+  if ($changes.Count -gt 0) {
+    Write-Host ""
+    Write-Host "WHAT'S NEW IN v$($manifest.version)" -ForegroundColor Cyan
+    foreach ($change in $changes) {
+      Write-Host "  $change"
+    }
+  } else {
+    Write-Host "Release notes: https://github.com/$releaseRepo/releases/tag/v$($manifest.version)"
+  }
+  Write-Host ""
 } finally {
   Remove-Item $staging -Recurse -Force -ErrorAction SilentlyContinue
 }
