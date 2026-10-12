@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.4.3] — 2026-10-12
+- Save SSH passwords encrypted with Windows DPAPI after successful login.
+- Reuse saved SSH passwords automatically, including Win+R aliases.
+- Verify SSH host keys before trusting new devices.
+- Include the interactive SSH module in updates and installers.
+
 ## [1.4.0] — 2026-10-12
 - SSH connections using `s IP` and `s ALIAS`.
 - Win+R shortcuts for saved devices, with Telnet/SSH protocol selection.
