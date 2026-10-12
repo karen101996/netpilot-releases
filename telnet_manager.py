@@ -161,7 +161,7 @@ def check_updates():
         local = json.loads(manifest.read_text(encoding="utf-8"))["version"]
         cached = json.loads(cache.read_text(encoding="utf-8")) if cache.exists() else {}
         if time.time() - cached.get("checked_at", 0) > 86400:
-            url = "https://api.github.com/repos/karen101996/netpilot-releases/contents/version.json"
+            url = ("https://api.github.com/repos/karen101996/netpilot-releases/contents/version.json"\n                   f"?ref=main&nocache={time.time_ns()}")
             request = urllib.request.Request(url, headers={
                 "User-Agent": "NetPilot", "Accept": "application/vnd.github+json"
             })
