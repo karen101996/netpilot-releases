@@ -1,0 +1,58 @@
+name: Publish NetPilot Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (example: 1.2.5)'
+        required: true
+        default: '1.2.5'
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout distribution
+        uses: actions/checkout@v4
+      - name: Validate manifest and requested version
+        shell: bash
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, os, pathlib, re, sys
+          version = os.environ["RELEASE_VERSION"]
+          if not re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+", version):
+              sys.exit("Invalid version")
+          manifest = json.loads(pathlib.Path("version.json").read_text())
+          if manifest["version"] != version:
+              sys.exit("Requested version does not match version.json")
+          for name, expected in manifest["files"].items():
+              data = pathlib.Path(name).read_bytes()
+              actual = hashlib.sha1(b"blob " + str(len(data)).encode() + b"\0" + data).hexdigest()
+              if actual != expected:
+                  sys.exit(f"Manifest mismatch: {name}")
+          print("All release files match manifest.")
+          PY
+      - name: Build distribution archive
+        shell: bash
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: |
+          mkdir -p dist
+          zip -j "dist/NetPilot-${RELEASE_VERSION}-Windows.zip" INSTALL.bat install.ps1 telnet_manager.py requirements.txt update.ps1 version.json
+          sha256sum "dist/NetPilot-${RELEASE_VERSION}-Windows.zip" > "dist/SHA256SUMS.txt"
+      - name: Publish GitHub Release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: |
+          if gh release view "v${RELEASE_VERSION}" >/dev/null 2>&1; then
+            echo "Release v${RELEASE_VERSION} already exists. Refusing to overwrite."
+            exit 1
+          fi
+          gh release create "v${RELEASE_VERSION}" dist/* --title "NetPilot v${RELEASE_VERSION}" --notes-file CHANGELOG.md --latest
