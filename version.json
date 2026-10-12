@@ -3,7 +3,7 @@
   "channel": "stable",
   "files": {
     "install.ps1": "16d87e61801de2e0c5481c1791223de1a56ec217",
-    "telnet_manager.py": "306b7911b9d1a0e8378435996d3da44a8f80b051"
+    "telnet_manager.py": "306b7911b9d1a0e8378435996d3da44a8f80b051",
     "requirements.txt": "8f79282c550c6e40adc8b7b8becf93fd9e642277",
     "update.ps1": "cca9ddbaebb2eb40bdc9791393c9bf56595c2785"
   },
