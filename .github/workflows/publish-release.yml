@@ -1,4 +1,4 @@
-name: Publish NetPilot Release
+name: Publish RAVLAN Release
 
 on:
   workflow_dispatch:
@@ -43,8 +43,8 @@ jobs:
           RELEASE_VERSION: ${{ inputs.version }}
         run: |
           mkdir -p dist
-          zip -j "dist/NetPilot-${RELEASE_VERSION}-Windows.zip" INSTALL.bat install.ps1 telnet_manager.py ssh_password.py requirements.txt update.ps1 version.json
-          sha256sum "dist/NetPilot-${RELEASE_VERSION}-Windows.zip" > "dist/SHA256SUMS.txt"
+          zip -j "dist/RAVLAN-${RELEASE_VERSION}-Windows.zip" INSTALL.bat install.ps1 telnet_manager.py ssh_password.py requirements.txt update.ps1 version.json
+          sha256sum "dist/RAVLAN-${RELEASE_VERSION}-Windows.zip" > "dist/SHA256SUMS.txt"
       - name: Publish GitHub Release
         shell: bash
         env:
@@ -55,4 +55,4 @@ jobs:
             echo "Release v${RELEASE_VERSION} already exists. Refusing to overwrite."
             exit 1
           fi
-          gh release create "v${RELEASE_VERSION}" dist/* --title "NetPilot v${RELEASE_VERSION}" --notes-file CHANGELOG.md --latest
+          gh release create "v${RELEASE_VERSION}" dist/* --title "RAVLAN v${RELEASE_VERSION}" --notes-file CHANGELOG.md --latest
