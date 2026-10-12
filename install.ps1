@@ -5,27 +5,63 @@ $legacy = Join-Path $env:WINDIR 't.bat'
 $backupDir = Join-Path $root 'backups'
 Write-Host 'NetPilot installer: command t' -ForegroundColor Cyan
 
-# Use an existing supported Python or install 3.13 via winget.
+# Find a working Python; on a clean Windows PC download the official installer.
 $python = $null
-try {
-  & py -3.13 -c 'import sys; assert sys.version_info >= (3, 10)' 2>$null | Out-Null
-  if ($LASTEXITCODE -eq 0) { $python = 'py' }
-} catch {}
-if (-not $python) {
-  try {
-    & python -c 'import sys; assert sys.version_info >= (3, 10)' 2>$null | Out-Null
-    if ($LASTEXITCODE -eq 0) { $python = 'python' }
-  } catch {}
+$candidates = @(
+  (Join-Path $env:LOCALAPPDATA 'Programs\Python\Python313\python.exe'),
+  (Join-Path $env:LOCALAPPDATA 'NetPilot\Python313\python.exe')
+)
+foreach ($candidate in $candidates) {
+  if (Test-Path $candidate) {
+    & $candidate -c 'import sys; assert sys.version_info >= (3, 10)' 2>$null
+    if ($LASTEXITCODE -eq 0) { $python = $candidate; break }
+  }
 }
 if (-not $python) {
-  if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
-    throw 'Python 3.13 required; winget not found. Install Python then rerun.'
+  foreach ($command in @('py', 'python')) {
+    if (-not (Get-Command $command -ErrorAction SilentlyContinue)) { continue }
+    try {
+      if ($command -eq 'py') {
+        & py -3.13 -c 'import sys; assert sys.version_info >= (3, 10)' 2>$null | Out-Null
+      } else {
+        & python -c 'import sys; assert sys.version_info >= (3, 10)' 2>$null | Out-Null
+      }
+      if ($LASTEXITCODE -eq 0) { $python = $command; break }
+    } catch {}
   }
-  & winget install --id Python.Python.3.13 --exact --source winget --accept-source-agreements --accept-package-agreements
-  if ($LASTEXITCODE -ne 0) { throw 'Python installation failed.' }
-  $pythonPath = Join-Path $env:LOCALAPPDATA 'Programs\Python\Python313\python.exe'
-  if (-not (Test-Path $pythonPath)) { throw 'Python installed but not found. Open a new shell and rerun INSTALL.bat.' }
-  $python = $pythonPath
+}
+if (-not $python) {
+  $pythonVersion = '3.13.7'
+  $architecture = if ([Environment]::Is64BitOperatingSystem) { 'amd64' } else { 'win32' }
+  if ($env:PROCESSOR_ARCHITECTURE -eq 'ARM64' -or $env:PROCESSOR_ARCHITEW6432 -eq 'ARM64') {
+    $architecture = 'arm64'
+  }
+  $installerName = "python-$pythonVersion-$architecture.exe"
+  $downloadUrl = "https://www.python.org/ftp/python/$pythonVersion/$installerName"
+  $downloadDir = Join-Path $env:TEMP 'NetPilot-Setup'
+  New-Item -ItemType Directory -Force -Path $downloadDir | Out-Null
+  $installerPath = Join-Path $downloadDir $installerName
+  Write-Host "Python not found. Downloading Python $pythonVersion from python.org..." -ForegroundColor Cyan
+  [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+  Invoke-WebRequest -Uri $downloadUrl -OutFile $installerPath -UseBasicParsing
+  $signature = Get-AuthenticodeSignature -FilePath $installerPath
+  if ($signature.Status -ne 'Valid' -or $signature.SignerCertificate.Subject -notmatch 'Python Software Foundation') {
+    throw 'Downloaded Python installer failed signature verification. Installation cancelled.'
+  }
+  $targetPython = Join-Path $env:LOCALAPPDATA 'NetPilot\Python313'
+  Write-Host 'Installing Python for current user (no administrator required)...' -ForegroundColor Cyan
+  $arguments = @('/quiet', 'InstallAllUsers=0', "TargetDir=$targetPython", 'Include_pip=1',
+                 'Include_launcher=0', 'PrependPath=0', 'Include_test=0')
+  $process = Start-Process -FilePath $installerPath -ArgumentList $arguments -Wait -PassThru
+  if ($process.ExitCode -ne 0 -and $process.ExitCode -ne 3010) {
+    throw "Python installation failed with exit code $($process.ExitCode)."
+  }
+  $python = Join-Path $targetPython 'python.exe'
+  if (-not (Test-Path $python)) {
+    throw "Python installer finished, but python.exe was not found at $python."
+  }
+  Remove-Item $installerPath -Force -ErrorAction SilentlyContinue
+  Write-Host 'Python installed successfully.' -ForegroundColor Green
 }
 
 New-Item -ItemType Directory -Force -Path $root, $bin, $backupDir | Out-Null
@@ -57,6 +93,13 @@ $cmd = '@echo off' + "`r`n" +
   '"%LOCALAPPDATA%\NetPilot\.venv\Scripts\python.exe" "%LOCALAPPDATA%\NetPilot\telnet_manager.py" %*' + "`r`n" +
   'if errorlevel 1 pause' + "`r`n"
 Set-Content -Path (Join-Path $bin 't.cmd') -Value $cmd -Encoding ASCII
+$sshCmd = '@echo off' + "`r`n" +
+  'title SSH %~1' + "`r`n" +
+  '"%LOCALAPPDATA%\NetPilot\.venv\Scripts\python.exe" "%LOCALAPPDATA%\NetPilot\telnet_manager.py" --ssh %*' + "`r`n" +
+  'if errorlevel 1 pause' + "`r`n"
+Set-Content -Path (Join-Path $bin 's.cmd') -Value $sshCmd -Encoding ASCII
+& $venvPython $current --sync-launchers
+if ($LASTEXITCODE -ne 0) { Write-Warning 'Some existing device launchers could not be synchronized.' }
 $npCmd = '@echo off' + "`r`n" +
   'if /I "%~1"=="update" goto update' + "`r`n" +
   'echo NetPilot: use np update to update. Telnet: t IP' + "`r`n" +
