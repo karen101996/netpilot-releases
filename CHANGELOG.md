@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4.0] — 2026-10-12
+- SSH connections using `s IP` and `s ALIAS`.
+- Win+R shortcuts for saved devices, with Telnet/SSH protocol selection.
+- Colorful `np help` in Russian, English, and Uzbek.
+- Persistent `np language ru|en|uz` and `np version`.
+- Signed Python installer fallback when winget is unavailable.
+- Existing credentials remain unchanged.
+
 ## [1.3.0] — 2026-10-12
 - Added a local device address book with `t add NAME IP`, `t list` and `t search QUERY`.
 - Connect to saved devices by alias using `t NAME`.
