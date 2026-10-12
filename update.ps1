@@ -4,8 +4,7 @@ $base = "https://raw.githubusercontent.com/$releaseRepo/main"
 $root = Join-Path $env:LOCALAPPDATA 'NetPilot'
 $staging = Join-Path ([IO.Path]::GetTempPath()) ('netpilot-' + [guid]::NewGuid().ToString('N'))
 function Download-Bytes([string]$url, [string]$path) {
-  $response = Invoke-WebRequest -Uri $url -UseBasicParsing -TimeoutSec 30
-  [IO.File]::WriteAllBytes($path, $response.Content)
+  Invoke-WebRequest -Uri $url -UseBasicParsing -TimeoutSec 30 -OutFile $path
 }
 function Git-Blob-Sha([string]$path) {
   $bytes = [IO.File]::ReadAllBytes($path)
