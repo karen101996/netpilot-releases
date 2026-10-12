@@ -15,7 +15,7 @@ A lightweight Windows CLI for network administrators. Connect over **SSH or Teln
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](#requirements)
 [![Release workflow](https://github.com/karen101996/netpilot-releases/actions/workflows/publish-release.yml/badge.svg)](https://github.com/karen101996/netpilot-releases/actions/workflows/publish-release.yml)
 
-### [Download latest release](https://github.com/karen101996/netpilot-releases/releases/latest) · [Quick start](#quick-start) · [Command reference](#command-reference) · [Русский](#русский)
+### [Download latest release](https://github.com/karen101996/netpilot-releases/releases/latest) · [Quick start](#quick-start) · [Command reference](#command-reference) · [Русский](#русский) · [O‘zbekcha](#ozbekcha)
 
 </div>
 
@@ -391,6 +391,183 @@ t 192.168.1.10 2323
 ### Полезные ссылки
 
 **[Скачать NetPilot](https://github.com/karen101996/netpilot-releases/releases/latest)** · [История версий](CHANGELOG.md) · [Планы развития](ROADMAP.md) · [Сообщить об ошибке](https://github.com/karen101996/netpilot-releases/issues)
+
+
+---
+
+## O‘zbekcha
+
+### NetPilot — Windows uchun SSH va Telnet orqali tezkor ulanish
+
+**NetPilot v1.4.4** — Windows 10 va Windows 11 tizimlarida router, kommutator, OLT va boshqa tarmoq qurilmalarini boshqarish uchun qulay buyruqlar qatori dasturi.
+
+Qurilmaning IP manzilini har safar yozish shart emas: uni bir marta qisqa nom bilan saqlang va keyin **CMD**, **Windows Terminal** yoki **Win + R** orqali ulaning.
+
+```text
+Win + R → home → SSH orqali ulanish
+Win + R → olt  → Telnet orqali ulanish
+
+CMD> s home
+CMD> t olt
+```
+
+### Asosiy imkoniyatlar
+
+| Imkoniyat | Tavsif |
+|---|---|
+| **SSH va Telnet** | Tarmoq qurilmalarining buyruqlar qatoriga ulanish |
+| **Qisqa nomlar** | IP o‘rniga `s home` yoki `t olt` buyrug‘idan foydalanish |
+| **Win + R** | Saqlangan qurilmaga tezkor ulanish |
+| **Parollarni saqlash** | Windows DPAPI yordamida mahalliy shifrlash |
+| **Avtomatik kirish** | Muvaffaqiyatli birinchi ulanishdan keyin parolni qayta kiritmaslik |
+| **Qurilmalar ro‘yxati** | Qurilmalarni qo‘shish, ko‘rish va qidirish |
+| **SSH foydalanuvchisi** | Standart login — `admin`; uni o‘zgartirish mumkin |
+| **Parolni yangilash** | `--reset` orqali eski parolni almashtirish |
+| **SSH server kaliti** | Noma’lum server kalitini tekshirish va tasdiqlash |
+| **Uchta til** | O‘zbek, rus va ingliz tillaridagi yordam menyusi |
+| **Yangilanishlar** | `np update` orqali dasturni yangilash |
+
+### O‘rnatish
+
+1. **[NetPilot’ning so‘nggi versiyasi](https://github.com/karen101996/netpilot-releases/releases/latest)** sahifasini oching.
+2. **Assets** bo‘limidan Windows uchun ZIP arxivini yuklab oling.
+3. Arxivni alohida papkaga oching.
+4. **`INSTALL.bat`** faylini ishga tushiring.
+5. O‘rnatish tugagach, yangi CMD yoki Windows Terminal oynasini oching.
+6. Versiyani tekshiring va o‘zbek tilini tanlang:
+
+```bat
+np version
+np language uz
+np help
+```
+
+Dastur odatda `%LOCALAPPDATA%\NetPilot` papkasiga o‘rnatiladi. Dastlabki o‘rnatishda Python va kerakli kutubxonalarni yuklab olish uchun internet kerak bo‘lishi mumkin.
+
+### SSH orqali ulanish
+
+IP manzil bilan ulanish:
+
+```bat
+s 192.168.88.1
+```
+
+Standart SSH porti — **22**, foydalanuvchi nomi esa **admin**. Birinchi ulanishda server kalitining haqiqiyligini tekshirib, parolni kiriting. Muvaffaqiyatli kirishdan so‘ng parol Windows DPAPI orqali shifrlangan holda saqlanadi.
+
+Qurilmani nom bilan saqlash:
+
+```bat
+s add home 192.168.88.1
+s home
+```
+
+Boshqa loginni ko‘rsatish yoki o‘zgartirish:
+
+```bat
+s add office 192.168.88.2 operator
+s edit office admin
+s office
+```
+
+SSH paroli o‘zgargan bo‘lsa:
+
+```bat
+s home --reset
+```
+
+Yangi parol faqat **muvaffaqiyatli autentifikatsiyadan keyin** saqlanadi. Boshqa qurilmalarning parollari o‘zgarmaydi.
+
+### Telnet orqali ulanish
+
+```bat
+t 192.168.1.10
+t add olt 192.168.1.10
+t olt
+t olt --reset
+```
+
+Telnet uchun standart port — **23**. Boshqa portni ko‘rsatish mumkin:
+
+```bat
+t 192.168.1.10 2323
+```
+
+### Win + R orqali tezkor ulanish
+
+1. Qurilmani `home` yoki `olt` nomi bilan saqlang.
+2. Klaviaturada **Win + R** tugmalarini bosing.
+3. Qurilma nomini kiriting va **Enter** tugmasini bosing.
+
+NetPilot saqlangan protokol orqali ulanish oynasini ochadi.
+
+### Buyruqlar jadvali
+
+| Buyruq | Vazifasi |
+|---|---|
+| `s IP` | SSH orqali ulanish |
+| `s IP 2222 --user LOGIN` | Boshqa port va login bilan SSH |
+| `t IP` | Telnet orqali ulanish |
+| `t IP 2323` | Boshqa port bilan Telnet |
+| `s add NOM IP [LOGIN]` | SSH qurilmasini qo‘shish |
+| `t add NOM IP` | Telnet qurilmasini qo‘shish |
+| `s edit NOM LOGIN` | SSH loginini o‘zgartirish |
+| `s NOM` / `t NOM` | Saqlangan nom orqali ulanish |
+| `s list` / `t list` | Qurilmalar ro‘yxati |
+| `s search MATN` / `t search MATN` | Qurilmani qidirish |
+| `s NOM --reset` | SSH parolini yangilash |
+| `t NOM --reset` | Telnet ma’lumotlarini qayta kiritish |
+| `np help` | Yordam menyusi |
+| `np language uz` | O‘zbek tilini tanlash |
+| `np language ru` | Rus tilini tanlash |
+| `np language en` | Ingliz tilini tanlash |
+| `np version` | O‘rnatilgan versiyani ko‘rish |
+| `np update` | Yangilanishni tekshirish va o‘rnatish |
+
+*Eslatma:* `NOM`, `IP`, `LOGIN` va `MATN` — tushuntirish uchun yozilgan belgilar. Buyruqda ularning o‘rniga haqiqiy qiymatlarni kiriting.
+
+### Xavfsizlik
+
+- Saqlangan parollar kompyuterning o‘zida **Windows DPAPI** yordamida shifrlanadi.
+- **SSH** tarmoq orqali uzatiladigan ma’lumotlarni shifrlaydi. Yangi SSH server kalitini tasdiqlashdan oldin uning haqiqiyligini tekshiring.
+- **Telnet** tarmoq trafikini shifrlamaydi. Uni faqat ishonchli boshqaruv tarmoqlarida ishlating.
+- NetPilot saqlangan qurilma parollarini GitHub’ga yubormaydi.
+- Yangilanish fayllari ochiq versiya manifestidagi xesh qiymatlari bilan tekshiriladi. Bu raqamli imzo o‘rnini bosmaydi.
+
+Batafsil: [Xavfsizlik siyosati](SECURITY.md).
+
+### Ko‘p beriladigan savollar
+
+<details>
+<summary><strong>s, t yoki np buyrug‘i ishlamasa nima qilish kerak?</strong></summary>
+
+O‘rnatishdan keyin CMD oynasini yopib, yangisini oching. `where s`, `where t` va `where np` buyruqlari bilan tekshiring.
+
+</details>
+
+<details>
+<summary><strong>SSH parolini qanday almashtirish mumkin?</strong></summary>
+
+`s NOM --reset` buyrug‘ini kiriting. Yangi parol muvaffaqiyatli ulanishdan so‘ng saqlanadi.
+
+</details>
+
+<details>
+<summary><strong>Har bir qurilma uchun alohida login ishlatsa bo‘ladimi?</strong></summary>
+
+Ha. Masalan, `s add office 192.168.1.1 operator`. Keyin loginni `s edit office admin` orqali o‘zgartirishingiz mumkin.
+
+</details>
+
+<details>
+<summary><strong>Yangilash saqlangan qurilmalarni o‘chiradimi?</strong></summary>
+
+Odatdagi `np update` yangilanishi qurilmalar ro‘yxati va shifrlangan parollarni saqlab qoladi.
+
+</details>
+
+### Havolalar
+
+**[NetPilot’ni yuklab olish](https://github.com/karen101996/netpilot-releases/releases/latest)** · [Versiyalar tarixi](CHANGELOG.md) · [Rivojlanish rejasi](ROADMAP.md) · [Xatolik haqida xabar berish](https://github.com/karen101996/netpilot-releases/issues)
 
 ---
 
