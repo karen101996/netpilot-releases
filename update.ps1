@@ -2,7 +2,7 @@ $ErrorActionPreference = 'Stop'
 $releaseRepo = 'karen101996/ravlan-releases'
 $apiBase = "https://api.github.com/repos/$releaseRepo/contents"
 $root = Join-Path $env:LOCALAPPDATA 'NetPilot'
-$staging = Join-Path ([IO.Path]::GetTempPath()) ('netpilot-' + [guid]::NewGuid().ToString('N'))
+$staging = Join-Path ([IO.Path]::GetTempPath()) ('ravlan-' + [guid]::NewGuid().ToString('N'))
 function Download-ReleaseFile([string]$file, [string]$path) {
   $headers = @{ 'User-Agent' = 'RAVLAN-Updater'; 'Accept' = 'application/vnd.github+json' }
   $response = Invoke-RestMethod -Uri ("$apiBase/$file" + "?ref=main&nocache=" + [DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()) -Headers $headers -TimeoutSec 30
