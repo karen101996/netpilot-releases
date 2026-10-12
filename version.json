@@ -1,16 +1,17 @@
 {
-  "version": "1.4.4",
+  "version": "1.5.0",
   "channel": "stable",
   "files": {
-    "install.ps1": "9ac10ed557004e02974b8ba68e719840081c0cb0",
-    "telnet_manager.py": "83cd4e6cb52a224d417d27aa35174dbf8f1daea6",
+    "install.ps1": "81219fae37fd8a279a38c7e103fb28b9290a4fb7",
+    "telnet_manager.py": "a95f8f46e7693601f28b444d561a411c88aa008f",
     "requirements.txt": "259fdb0f641f53b43bef198a96b2083c7ba6fc53",
-    "update.ps1": "6d26ef4ded54d12323f74b698d4174160978e5c3",
+    "update.ps1": "aca72d94279542e36ebc25522e76e7ffca012f04",
     "ssh_password.py": "d085da1adfb8cbf2a2de324acafff2ce4664c14f"
   },
   "changes": [
-    "Reset a saved SSH password with s NAME --reset",
-    "Re-enter and securely save the new password",
-    "Other device passwords remain unchanged"
+    "Rebranded NetPilot to RAVLAN",
+    "New rv command for help, language, version and updates",
+    "Existing np command, saved device aliases and encrypted passwords remain compatible",
+    "Updated public release URLs"
   ]
 }
