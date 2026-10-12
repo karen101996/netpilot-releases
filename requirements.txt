@@ -1,0 +1,2 @@
+telnetlib3>=2.0,<6
+pywin32>=300
