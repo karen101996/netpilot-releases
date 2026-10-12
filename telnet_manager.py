@@ -7,6 +7,7 @@ import re
 import sys
 import time
 import urllib.request
+import base64
 from pathlib import Path
 
 import telnetlib3
@@ -160,9 +161,13 @@ def check_updates():
         local = json.loads(manifest.read_text(encoding="utf-8"))["version"]
         cached = json.loads(cache.read_text(encoding="utf-8")) if cache.exists() else {}
         if time.time() - cached.get("checked_at", 0) > 86400:
-            url = "https://raw.githubusercontent.com/karen101996/netpilot-releases/main/version.json"
-            with urllib.request.urlopen(url, timeout=3) as response:
-                remote = json.loads(response.read(65536).decode("utf-8"))["version"]
+            url = "https://api.github.com/repos/karen101996/netpilot-releases/contents/version.json"
+            request = urllib.request.Request(url, headers={
+                "User-Agent": "NetPilot", "Accept": "application/vnd.github+json"
+            })
+            with urllib.request.urlopen(request, timeout=3) as response:
+                item = json.loads(response.read(65536).decode("utf-8"))
+            remote = json.loads(base64.b64decode(item["content"]).decode("utf-8"))["version"]
             cached = {"checked_at": time.time(), "version": remote}
             cache.write_text(json.dumps(cached), encoding="utf-8")
         remote = cached.get("version", local)
