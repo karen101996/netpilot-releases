@@ -14,5 +14,5 @@ if errorlevel 1 (
   exit /b 1
 )
 echo.
-echo Installation complete. Open a NEW CMD and run: t 10.137.1.19
+echo Installation complete. Open a NEW CMD and run: np help
 pause
