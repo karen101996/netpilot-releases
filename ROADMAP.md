@@ -1,6 +1,6 @@
-# NetPilot Roadmap
+# RAVLAN Roadmap
 
-NetPilot is a Windows CLI for SSH and Telnet device access. This roadmap separates **shipped features** from ideas under consideration.
+RAVLAN is a Windows CLI for SSH and Telnet device access. This roadmap separates **shipped features** from ideas under consideration.
 
 ## Shipped — v1.4.4
 
@@ -18,7 +18,7 @@ NetPilot is a Windows CLI for SSH and Telnet device access. This roadmap separat
 
 ## Planned / under consideration
 
-- [ ] Installation diagnostics (`np doctor`)
+- [ ] Installation diagnostics (`rv doctor`)
 - [ ] Network reachability diagnostics
 - [ ] Optional local connection history
 - [ ] Read-only device configuration backups
