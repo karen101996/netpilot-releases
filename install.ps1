@@ -104,7 +104,7 @@ if ($LASTEXITCODE -ne 0) { Write-Warning 'Some existing device launchers could n
 $npLines = @(
   '@echo off'
   'if /I "%~1"=="update" goto :update'
-  '"%LOCALAPPDATA%\NetPilot\.venv\Scripts\python.exe" "%LOCALAPPDATA%\NetPilot\telnet_manager.py" --np %*'
+  '"%LOCALAPPDATA%\NetPilot\.venv\Scripts\python.exe" "%LOCALAPPDATA%\NetPilot\telnet_manager.py" --rv %*'
   'exit /b %errorlevel%'
   ':update'
   'powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "%LOCALAPPDATA%\NetPilot\update.ps1"'
