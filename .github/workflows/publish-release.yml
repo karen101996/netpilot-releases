@@ -43,7 +43,7 @@ jobs:
           RELEASE_VERSION: ${{ inputs.version }}
         run: |
           mkdir -p dist
-          zip -j "dist/NetPilot-${RELEASE_VERSION}-Windows.zip" INSTALL.bat install.ps1 telnet_manager.py requirements.txt update.ps1 version.json
+          zip -j "dist/NetPilot-${RELEASE_VERSION}-Windows.zip" INSTALL.bat install.ps1 telnet_manager.py ssh_password.py requirements.txt update.ps1 version.json
           sha256sum "dist/NetPilot-${RELEASE_VERSION}-Windows.zip" > "dist/SHA256SUMS.txt"
       - name: Publish GitHub Release
         shell: bash
