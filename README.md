@@ -1,8 +1,8 @@
 <div align="center">
 
-<img src="assets/netpilot-banner.svg" alt="NetPilot — SSH and Telnet for Windows" width="100%" />
+<img src="assets/ravlan-banner.svg" alt="RAVLAN — SSH and Telnet for Windows" width="100%" />
 
-# NetPilot
+# RAVLAN
 
 ### Fast, secure-by-default device access for Windows
 
@@ -10,20 +10,20 @@
 
 A lightweight Windows CLI for network administrators. Connect over **SSH or Telnet**, save device aliases, and launch sessions directly from **Win + R** — without repeatedly entering credentials.
 
-[![Latest release](https://img.shields.io/github/v/release/karen101996/netpilot-releases?display_name=tag&label=latest%20release&color=2563eb)](https://github.com/karen101996/netpilot-releases/releases/latest)
+[![Latest release](https://img.shields.io/github/v/release/karen101996/ravlan-releases?display_name=tag&label=latest%20release&color=2563eb)](https://github.com/karen101996/ravlan-releases/releases/latest)
 [![Windows](https://img.shields.io/badge/Windows-10%20%2F%2011-0078D4?logo=windows&logoColor=white)](#requirements)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](#requirements)
-[![Release workflow](https://github.com/karen101996/netpilot-releases/actions/workflows/publish-release.yml/badge.svg)](https://github.com/karen101996/netpilot-releases/actions/workflows/publish-release.yml)
+[![Release workflow](https://github.com/karen101996/ravlan-releases/actions/workflows/publish-release.yml/badge.svg)](https://github.com/karen101996/ravlan-releases/actions/workflows/publish-release.yml)
 
-### [Download latest release](https://github.com/karen101996/netpilot-releases/releases/latest) · [Quick start](#quick-start) · [Command reference](#command-reference) · [Русский](#русский) · [O‘zbekcha](#ozbekcha)
+### [Download latest release](https://github.com/karen101996/ravlan-releases/releases/latest) · [Quick start](#quick-start) · [Command reference](#command-reference) · [Русский](#русский) · [O‘zbekcha](#ozbekcha)
 
 </div>
 
 ---
 
-## Why NetPilot?
+## Why RAVLAN?
 
-Managing routers, switches, OLTs and other network devices often means remembering IP addresses, opening terminal sessions, and typing the same passwords again. NetPilot makes the everyday workflow shorter.
+Managing routers, switches, OLTs and other network devices often means remembering IP addresses, opening terminal sessions, and typing the same passwords again. RAVLAN makes the everyday workflow shorter.
 
 ```text
 Win + R  →  home  →  SSH session
@@ -31,7 +31,7 @@ Win + R  →  olt   →  Telnet session
 
 CMD> s home
 CMD> t olt
-CMD> np help
+CMD> rv help
 ```
 
 ### Features
@@ -45,7 +45,7 @@ CMD> np help
 | 👤 | **SSH login management** | Default username `admin`; customize or edit per device |
 | 🔄 | **Password reset** | Replace saved SSH or Telnet passwords with `--reset` |
 | 🌐 | **Three languages** | Russian, English and Uzbek help interface |
-| 📦 | **Easy updates** | Run `np update` to install a verified public release |
+| 📦 | **Easy updates** | Run `rv update` to install a verified public release |
 
 > [!IMPORTANT]
 > **SSH and Telnet are different protocols.** SSH encrypts network traffic and verifies server host keys. Telnet does **not** encrypt traffic: use it only on trusted management networks.
@@ -61,19 +61,19 @@ CMD> np help
 
 ### Installation
 
-1. Open **[Latest release](https://github.com/karen101996/netpilot-releases/releases/latest)** and download the `NetPilot-*-Windows.zip` archive under **Assets**.
+1. Open **[Latest release](https://github.com/karen101996/ravlan-releases/releases/latest)** and download the `RAVLAN-*-Windows.zip` archive under **Assets**.
 2. Extract the archive into a folder.
 3. Run **`INSTALL.bat`**.
 4. Open a **new** CMD or Windows Terminal window.
 5. Check installation and connect:
 
 ```bat
-np version
-np help
+rv version
+rv help
 s 192.168.88.1
 ```
 
-NetPilot installs under `%LOCALAPPDATA%\NetPilot` and adds launchers to `%USERPROFILE%\bin`. Administrator rights are not normally required. Initial setup may install Python and Python dependencies.
+RAVLAN installs under `%LOCALAPPDATA%\RAVLAN` and adds launchers to `%USERPROFILE%\bin`. Administrator rights are not normally required. Initial setup may install Python and Python dependencies.
 
 ### Your first saved device
 
@@ -82,7 +82,7 @@ s add home 192.168.88.1
 s home
 ```
 
-The SSH username defaults to **`admin`**. On first login, enter the SSH password. After successful authentication, NetPilot saves it encrypted for future connections. When an SSH server is new, confirm its host-key fingerprint **only after verifying it belongs to your device**.
+The SSH username defaults to **`admin`**. On first login, enter the SSH password. After successful authentication, RAVLAN saves it encrypted for future connections. When an SSH server is new, confirm its host-key fingerprint **only after verifying it belongs to your device**.
 
 To use a different username:
 
@@ -116,10 +116,10 @@ You can also press **Win + R**, enter `home`, `router` or `olt`, and connect usi
 | `s search QUERY` / `t search QUERY` | Search by alias or IP |
 | `s NAME --reset` | Clear the saved SSH password and enter a new one |
 | `t NAME --reset` | Reset saved Telnet credentials |
-| `np help` | Show interactive, localized command help |
-| `np language ru\|en\|uz` | Change help language |
-| `np version` | Display installed version |
-| `np update` | Check for and install updates |
+| `rv help` | Show interactive, localized command help |
+| `rv language ru\|en\|uz` | Change help language |
+| `rv version` | Display installed version |
+| `rv update` | Check for and install updates |
 
 ### Everyday examples
 
@@ -131,14 +131,14 @@ s mikrotik --reset
 t add switch 192.168.1.20
 t switch
 
-np language ru
-np help
-np update
+rv language ru
+rv help
+rv update
 ```
 
 ## Security & privacy
 
-NetPilot keeps saved settings **on your Windows PC**.
+RAVLAN keeps saved settings **on your Windows PC**.
 
 - **SSH passwords:** `%USERPROFILE%\TelnetManager\ssh_passwords.json`
 - **Telnet credentials:** `%USERPROFILE%\TelnetManager\credentials.json`
@@ -158,22 +158,22 @@ NetPilot keeps saved settings **on your Windows PC**.
 Run:
 
 ```bat
-np update
+rv update
 ```
 
-NetPilot checks for updates periodically and can install a newer release on request. Existing device aliases and saved credentials are preserved by normal updates.
+RAVLAN checks for updates periodically and can install a newer release on request. Existing device aliases and saved credentials are preserved by normal updates.
 
-- **[Latest stable release](https://github.com/karen101996/netpilot-releases/releases/latest)**
-- [All releases](https://github.com/karen101996/netpilot-releases/releases)
+- **[Latest stable release](https://github.com/karen101996/ravlan-releases/releases/latest)**
+- [All releases](https://github.com/karen101996/ravlan-releases/releases)
 - [Changelog](CHANGELOG.md)
 - [Release manifest](version.json)
 
 ## Troubleshooting
 
 <details>
-<summary><strong>Windows says `s`, `t` or `np` is not recognized</strong></summary>
+<summary><strong>Windows says `s`, `t` or `rv` is not recognized</strong></summary>
 
-Open a new terminal after installation. Check `where s`, `where t` and `where np`. NetPilot places its command launchers in `%USERPROFILE%\bin`.
+Open a new terminal after installation. Check `where s`, `where t` and `where rv`. RAVLAN places its command launchers in `%USERPROFILE%\bin`.
 
 </details>
 
@@ -187,7 +187,7 @@ The password is saved only after a successful SSH authentication. Verify the use
 <details>
 <summary><strong>SSH connection refused or timed out</strong></summary>
 
-Confirm the IP address, network route, SSH service and port on the device. NetPilot cannot enable SSH remotely on equipment where it is disabled.
+Confirm the IP address, network route, SSH service and port on the device. RAVLAN cannot enable SSH remotely on equipment where it is disabled.
 
 </details>
 
@@ -201,21 +201,21 @@ Verify the fingerprint through a trusted management channel before accepting it.
 <details>
 <summary><strong>How do I change the language?</strong></summary>
 
-Run `np language ru`, `np language en` or `np language uz`. The setting persists across launches.
+Run `rv language ru`, `rv language en` or `rv language uz`. The setting persists across launches.
 
 </details>
 
 ## Project
 
-[Roadmap](ROADMAP.md) · [Changelog](CHANGELOG.md) · [Security policy](SECURITY.md) · [Contributing](CONTRIBUTING.md) · [Report an issue](https://github.com/karen101996/netpilot-releases/issues)
+[Roadmap](ROADMAP.md) · [Changelog](CHANGELOG.md) · [Security policy](SECURITY.md) · [Contributing](CONTRIBUTING.md) · [Report an issue](https://github.com/karen101996/ravlan-releases/issues)
 
 ---
 
 ## Русский
 
-### NetPilot — быстрый доступ к сетевому оборудованию через SSH и Telnet
+### RAVLAN — быстрый доступ к сетевому оборудованию через SSH и Telnet
 
-**NetPilot v1.4.4** — бесплатная утилита командной строки для Windows 10 и 11. Она помогает администраторам подключаться к маршрутизаторам, коммутаторам, OLT и другому сетевому оборудованию без постоянного ввода IP-адресов, логинов и паролей.
+**RAVLAN** — бесплатная утилита командной строки для Windows 10 и 11. Она помогает администраторам подключаться к маршрутизаторам, коммутаторам, OLT и другому сетевому оборудованию без постоянного ввода IP-адресов, логинов и паролей.
 
 **Один раз добавил устройство — дальше подключаешься по короткому имени.** Можно запускать из CMD, Windows Terminal или прямо через **Win + R**.
 
@@ -241,24 +241,24 @@ CMD> t olt
 | **Смена пароля** | Команда `--reset` запрашивает и сохраняет новый пароль |
 | **Проверка SSH-ключа** | Подтверждение ключа нового SSH-сервера и контроль изменений |
 | **Три языка** | Русский, английский и узбекский интерфейс справки |
-| **Обновления** | Установка новой версии командой `np update` |
+| **Обновления** | Установка новой версии командой `rv update` |
 
 ### Установка на Windows
 
-1. Перейди на страницу **[последнего релиза NetPilot](https://github.com/karen101996/netpilot-releases/releases/latest)**.
-2. В разделе **Assets** скачай ZIP-архив NetPilot для Windows.
+1. Перейди на страницу **[последнего релиза RAVLAN](https://github.com/karen101996/ravlan-releases/releases/latest)**.
+2. В разделе **Assets** скачай ZIP-архив RAVLAN для Windows.
 3. Распакуй архив в удобную папку.
 4. Запусти **`INSTALL.bat`** и дождись окончания установки.
 5. Открой **новое окно CMD** или Windows Terminal.
 6. Проверь версию и открой справку:
 
 ```bat
-np version
-np language ru
-np help
+rv version
+rv language ru
+rv help
 ```
 
-Программа устанавливается в `%LOCALAPPDATA%\NetPilot`, а команды запуска добавляются в `%USERPROFILE%\bin`. Обычно права администратора не требуются. При первой установке может понадобиться доступ к интернету для Python и зависимостей.
+Программа устанавливается в `%LOCALAPPDATA%\RAVLAN`, а команды запуска добавляются в `%USERPROFILE%\bin`. Обычно права администратора не требуются. При первой установке может понадобиться доступ к интернету для Python и зависимостей.
 
 ### Быстрый старт: SSH
 
@@ -268,7 +268,7 @@ np help
 s 192.168.88.1
 ```
 
-По умолчанию NetPilot использует порт **22** и имя пользователя **admin**. При первом подключении нужно подтвердить ключ SSH-сервера, предварительно проверив его отпечаток, и ввести пароль. После успешной авторизации пароль сохраняется в зашифрованном виде.
+По умолчанию RAVLAN использует порт **22** и имя пользователя **admin**. При первом подключении нужно подтвердить ключ SSH-сервера, предварительно проверив его отпечаток, и ввести пароль. После успешной авторизации пароль сохраняется в зашифрованном виде.
 
 Создать короткое имя и подключиться:
 
@@ -291,7 +291,7 @@ s office
 s home --reset
 ```
 
-NetPilot запросит новый пароль и сохранит его **только после успешного входа**. Пароли остальных устройств не изменятся.
+RAVLAN запросит новый пароль и сохранит его **только после успешного входа**. Пароли остальных устройств не изменятся.
 
 ### Быстрый старт: Telnet
 
@@ -334,19 +334,19 @@ t 192.168.1.10 2323
 | `s search ТЕКСТ` / `t search ТЕКСТ` | Найти устройство |
 | `s ИМЯ --reset` | Заменить сохранённый пароль SSH |
 | `t ИМЯ --reset` | Сбросить данные Telnet |
-| `np help` | Справка по командам |
-| `np language ru` | Русский язык справки |
-| `np language en` | Английский язык справки |
-| `np language uz` | Узбекский язык справки |
-| `np version` | Посмотреть установленную версию |
-| `np update` | Проверить и установить обновление |
+| `rv help` | Справка по командам |
+| `rv language ru` | Русский язык справки |
+| `rv language en` | Английский язык справки |
+| `rv language uz` | Узбекский язык справки |
+| `rv version` | Посмотреть установленную версию |
+| `rv update` | Проверить и установить обновление |
 
 ### Безопасность и конфиденциальность
 
 - Пароли хранятся **локально на компьютере** и шифруются через **Windows DPAPI**.
 - SSH обеспечивает шифрование сетевого соединения; при первом подключении важно проверить отпечаток ключа сервера.
 - **Telnet не шифрует трафик**. Даже если пароль защищён на диске, при подключении через Telnet он передаётся по сети без шифрования. Используй Telnet только в доверенных сетях управления.
-- NetPilot не синхронизирует сохранённые пароли с GitHub.
+- RAVLAN не синхронизирует сохранённые пароли с GitHub.
 - Обновления загружаются через HTTPS с проверкой файлов по опубликованному манифесту. Это **не цифровая подпись релиза**.
 
 Подробнее: [Политика безопасности](SECURITY.md).
@@ -356,7 +356,7 @@ t 192.168.1.10 2323
 <details>
 <summary><strong>Команда s, t или np не запускается — что делать?</strong></summary>
 
-После установки закрой и заново открой CMD. Проверь `where s`, `where t` и `where np`. Команды должны находиться в `%USERPROFILE%\bin`.
+После установки закрой и заново открой CMD. Проверь `where s`, `where t` и `where rv`. Команды должны находиться в `%USERPROFILE%\bin`.
 
 </details>
 
@@ -377,12 +377,12 @@ t 192.168.1.10 2323
 <details>
 <summary><strong>Обновление удалит сохранённые устройства и пароли?</strong></summary>
 
-Обычное обновление через `np update` сохраняет адресную книгу и существующие зашифрованные учётные данные.
+Обычное обновление через `rv update` сохраняет адресную книгу и существующие зашифрованные учётные данные.
 
 </details>
 
 <details>
-<summary><strong>Можно ли использовать NetPilot без интернета?</strong></summary>
+<summary><strong>Можно ли использовать RAVLAN без интернета?</strong></summary>
 
 После установки для подключения к оборудованию достаточно сетевого доступа к самому устройству. Интернет нужен для установки зависимостей и проверки обновлений.
 
@@ -390,16 +390,16 @@ t 192.168.1.10 2323
 
 ### Полезные ссылки
 
-**[Скачать NetPilot](https://github.com/karen101996/netpilot-releases/releases/latest)** · [История версий](CHANGELOG.md) · [Планы развития](ROADMAP.md) · [Сообщить об ошибке](https://github.com/karen101996/netpilot-releases/issues)
+**[Скачать RAVLAN](https://github.com/karen101996/ravlan-releases/releases/latest)** · [История версий](CHANGELOG.md) · [Планы развития](ROADMAP.md) · [Сообщить об ошибке](https://github.com/karen101996/ravlan-releases/issues)
 
 
 ---
 
 ## O‘zbekcha
 
-### NetPilot — Windows uchun SSH va Telnet orqali tezkor ulanish
+### RAVLAN — Windows uchun SSH va Telnet orqali tezkor ulanish
 
-**NetPilot v1.4.4** — Windows 10 va Windows 11 tizimlarida router, kommutator, OLT va boshqa tarmoq qurilmalarini boshqarish uchun qulay buyruqlar qatori dasturi.
+**RAVLAN** — Windows 10 va Windows 11 tizimlarida router, kommutator, OLT va boshqa tarmoq qurilmalarini boshqarish uchun qulay buyruqlar qatori dasturi.
 
 Qurilmaning IP manzilini har safar yozish shart emas: uni bir marta qisqa nom bilan saqlang va keyin **CMD**, **Windows Terminal** yoki **Win + R** orqali ulaning.
 
@@ -425,11 +425,11 @@ CMD> t olt
 | **Parolni yangilash** | `--reset` orqali eski parolni almashtirish |
 | **SSH server kaliti** | Noma’lum server kalitini tekshirish va tasdiqlash |
 | **Uchta til** | O‘zbek, rus va ingliz tillaridagi yordam menyusi |
-| **Yangilanishlar** | `np update` orqali dasturni yangilash |
+| **Yangilanishlar** | `rv update` orqali dasturni yangilash |
 
 ### O‘rnatish
 
-1. **[NetPilot’ning so‘nggi versiyasi](https://github.com/karen101996/netpilot-releases/releases/latest)** sahifasini oching.
+1. **[RAVLAN’ning so‘nggi versiyasi](https://github.com/karen101996/ravlan-releases/releases/latest)** sahifasini oching.
 2. **Assets** bo‘limidan Windows uchun ZIP arxivini yuklab oling.
 3. Arxivni alohida papkaga oching.
 4. **`INSTALL.bat`** faylini ishga tushiring.
@@ -437,12 +437,12 @@ CMD> t olt
 6. Versiyani tekshiring va o‘zbek tilini tanlang:
 
 ```bat
-np version
-np language uz
-np help
+rv version
+rv language uz
+rv help
 ```
 
-Dastur odatda `%LOCALAPPDATA%\NetPilot` papkasiga o‘rnatiladi. Dastlabki o‘rnatishda Python va kerakli kutubxonalarni yuklab olish uchun internet kerak bo‘lishi mumkin.
+Dastur odatda `%LOCALAPPDATA%\RAVLAN` papkasiga o‘rnatiladi. Dastlabki o‘rnatishda Python va kerakli kutubxonalarni yuklab olish uchun internet kerak bo‘lishi mumkin.
 
 ### SSH orqali ulanish
 
@@ -498,7 +498,7 @@ t 192.168.1.10 2323
 2. Klaviaturada **Win + R** tugmalarini bosing.
 3. Qurilma nomini kiriting va **Enter** tugmasini bosing.
 
-NetPilot saqlangan protokol orqali ulanish oynasini ochadi.
+RAVLAN saqlangan protokol orqali ulanish oynasini ochadi.
 
 ### Buyruqlar jadvali
 
@@ -516,12 +516,12 @@ NetPilot saqlangan protokol orqali ulanish oynasini ochadi.
 | `s search MATN` / `t search MATN` | Qurilmani qidirish |
 | `s NOM --reset` | SSH parolini yangilash |
 | `t NOM --reset` | Telnet ma’lumotlarini qayta kiritish |
-| `np help` | Yordam menyusi |
-| `np language uz` | O‘zbek tilini tanlash |
-| `np language ru` | Rus tilini tanlash |
-| `np language en` | Ingliz tilini tanlash |
-| `np version` | O‘rnatilgan versiyani ko‘rish |
-| `np update` | Yangilanishni tekshirish va o‘rnatish |
+| `rv help` | Yordam menyusi |
+| `rv language uz` | O‘zbek tilini tanlash |
+| `rv language ru` | Rus tilini tanlash |
+| `rv language en` | Ingliz tilini tanlash |
+| `rv version` | O‘rnatilgan versiyani ko‘rish |
+| `rv update` | Yangilanishni tekshirish va o‘rnatish |
 
 *Eslatma:* `NOM`, `IP`, `LOGIN` va `MATN` — tushuntirish uchun yozilgan belgilar. Buyruqda ularning o‘rniga haqiqiy qiymatlarni kiriting.
 
@@ -530,7 +530,7 @@ NetPilot saqlangan protokol orqali ulanish oynasini ochadi.
 - Saqlangan parollar kompyuterning o‘zida **Windows DPAPI** yordamida shifrlanadi.
 - **SSH** tarmoq orqali uzatiladigan ma’lumotlarni shifrlaydi. Yangi SSH server kalitini tasdiqlashdan oldin uning haqiqiyligini tekshiring.
 - **Telnet** tarmoq trafikini shifrlamaydi. Uni faqat ishonchli boshqaruv tarmoqlarida ishlating.
-- NetPilot saqlangan qurilma parollarini GitHub’ga yubormaydi.
+- RAVLAN saqlangan qurilma parollarini GitHub’ga yubormaydi.
 - Yangilanish fayllari ochiq versiya manifestidagi xesh qiymatlari bilan tekshiriladi. Bu raqamli imzo o‘rnini bosmaydi.
 
 Batafsil: [Xavfsizlik siyosati](SECURITY.md).
@@ -540,7 +540,7 @@ Batafsil: [Xavfsizlik siyosati](SECURITY.md).
 <details>
 <summary><strong>s, t yoki np buyrug‘i ishlamasa nima qilish kerak?</strong></summary>
 
-O‘rnatishdan keyin CMD oynasini yopib, yangisini oching. `where s`, `where t` va `where np` buyruqlari bilan tekshiring.
+O‘rnatishdan keyin CMD oynasini yopib, yangisini oching. `where s`, `where t` va `where rv` buyruqlari bilan tekshiring.
 
 </details>
 
@@ -561,20 +561,23 @@ Ha. Masalan, `s add office 192.168.1.1 operator`. Keyin loginni `s edit office a
 <details>
 <summary><strong>Yangilash saqlangan qurilmalarni o‘chiradimi?</strong></summary>
 
-Odatdagi `np update` yangilanishi qurilmalar ro‘yxati va shifrlangan parollarni saqlab qoladi.
+Odatdagi `rv update` yangilanishi qurilmalar ro‘yxati va shifrlangan parollarni saqlab qoladi.
 
 </details>
 
 ### Havolalar
 
-**[NetPilot’ni yuklab olish](https://github.com/karen101996/netpilot-releases/releases/latest)** · [Versiyalar tarixi](CHANGELOG.md) · [Rivojlanish rejasi](ROADMAP.md) · [Xatolik haqida xabar berish](https://github.com/karen101996/netpilot-releases/issues)
+**[RAVLAN’ni yuklab olish](https://github.com/karen101996/ravlan-releases/releases/latest)** · [Versiyalar tarixi](CHANGELOG.md) · [Rivojlanish rejasi](ROADMAP.md) · [Xatolik haqida xabar berish](https://github.com/karen101996/ravlan-releases/issues)
 
 ---
 
 <div align="center">
 
-**NetPilot — less typing, faster access.**
+**RAVLAN — less typing, faster access.**
 
-[Download latest release](https://github.com/karen101996/netpilot-releases/releases/latest) · [Report a bug](https://github.com/karen101996/netpilot-releases/issues) · [Release history](CHANGELOG.md)
+[Download latest release](https://github.com/karen101996/ravlan-releases/releases/latest) · [Report a bug](https://github.com/karen101996/ravlan-releases/issues) · [Release history](CHANGELOG.md)
 
 </div>
+
+
+> **Migration from NetPilot:** Existing installations keep their legacy `%LOCALAPPDATA%\NetPilot` directory and `%USERPROFILE%\TelnetManager` data to preserve credentials and shortcuts. `np` remains available as a compatibility command; use `rv` for new instructions.
