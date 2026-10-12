@@ -1,9 +1,9 @@
 @echo off
 setlocal
-title NetPilot Installer
+title RAVLAN Installer
 cd /d "%~dp0"
 echo ====================================
-echo    NetPilot - One-click Installer
+echo    RAVLAN - One-click Installer
 echo ====================================
 echo.
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0install.ps1"
@@ -14,5 +14,5 @@ if errorlevel 1 (
   exit /b 1
 )
 echo.
-echo Installation complete. Open a NEW CMD and run: np help
+echo Installation complete. Open a NEW CMD and run: rv help
 pause
