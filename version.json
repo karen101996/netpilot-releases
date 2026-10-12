@@ -2,10 +2,10 @@
   "version": "1.5.0",
   "channel": "stable",
   "files": {
-    "install.ps1": "9ef7dce09b6673265f1743ea018056d831521c16",
+    "install.ps1": "7c5f79e464f2080b734719f43c213ca340a93fce",
     "telnet_manager.py": "d806ec65bdd804ceaaefd3b8ec60b08b6baf8671",
     "requirements.txt": "259fdb0f641f53b43bef198a96b2083c7ba6fc53",
-    "update.ps1": "aca72d94279542e36ebc25522e76e7ffca012f04",
+    "update.ps1": "b572761bef1ffa74e06dc371292117d88cd480f5",
     "ssh_password.py": "d085da1adfb8cbf2a2de324acafff2ce4664c14f"
   },
   "changes": [
