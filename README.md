@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="assets/ravlan-banner.svg" alt="RAVLAN — SSH and Telnet for Windows" width="100%" />
+<img src="assets/ravlan-main-banner.svg" alt="RAVLAN — SSH and Telnet for Windows" width="100%" />
 
 # RAVLAN
 
