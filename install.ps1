@@ -111,7 +111,8 @@ $npLines = @(
   'exit /b %errorlevel%'
 )
 $npCmd = ($npLines -join "`r`n") + "`r`n"
-Set-Content -Path (Join-Path $bin 'rv.cmd') -Value $npCmd -Encoding ASCII`nSet-Content -Path (Join-Path $bin 'np.cmd') -Value $npCmd -Encoding ASCII
+Set-Content -Path (Join-Path $bin 'rv.cmd') -Value $npCmd -Encoding ASCII
+Set-Content -Path (Join-Path $bin 'np.cmd') -Value $npCmd -Encoding ASCII
 
 # A t.bat in the user profile takes precedence when CMD starts there.
 # Preserve it, then forward it to the newly installed launcher.
