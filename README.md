@@ -354,7 +354,7 @@ t 192.168.1.10 2323
 ### Частые вопросы
 
 <details>
-<summary><strong>Команда s, t или np не запускается — что делать?</strong></summary>
+<summary><strong>Команда s, t или rv не запускается — что делать?</strong></summary>
 
 После установки закрой и заново открой CMD. Проверь `where s`, `where t` и `where rv`. Команды должны находиться в `%USERPROFILE%\bin`.
 
@@ -538,7 +538,7 @@ Batafsil: [Xavfsizlik siyosati](SECURITY.md).
 ### Ko‘p beriladigan savollar
 
 <details>
-<summary><strong>s, t yoki np buyrug‘i ishlamasa nima qilish kerak?</strong></summary>
+<summary><strong>s, t yoki rv buyrug‘i ishlamasa nima qilish kerak?</strong></summary>
 
 O‘rnatishdan keyin CMD oynasini yopib, yangisini oching. `where s`, `where t` va `where rv` buyruqlari bilan tekshiring.
 
