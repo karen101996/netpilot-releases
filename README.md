@@ -45,6 +45,10 @@ On the first connection, NetPilot asks for the username and password and can rem
 > [!NOTE]
 > NetPilot is a **Telnet** client, not an SSH client. Device login prompts and CLI behavior vary between vendors; compatibility with every model is not guaranteed.
 
+## Official releases
+
+Versioned installer ZIP archives can be published from the [Publish NetPilot Release workflow](https://github.com/karen101996/netpilot-releases/actions/workflows/publish-release.yml). The workflow validates all distributed files against the version manifest and generates a SHA-256 checksum for the ZIP before creating a GitHub Release. See [Releases](https://github.com/karen101996/netpilot-releases/releases) for published artifacts. Until the first GitHub Release is published, use the ZIP download linked above.
+
 ## Quick start
 
 ### Requirements
