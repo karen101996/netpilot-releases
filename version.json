@@ -1,15 +1,16 @@
 {
-  "version": "1.4.2",
+  "version": "1.4.3",
   "channel": "stable",
   "files": {
-    "install.ps1": "16d87e61801de2e0c5481c1791223de1a56ec217",
-    "telnet_manager.py": "25c0e7eba5b6d3144c811c3311e67727ef330496",
-    "requirements.txt": "8f79282c550c6e40adc8b7b8becf93fd9e642277",
-    "update.ps1": "cca9ddbaebb2eb40bdc9791393c9bf56595c2785"
+    "install.ps1": "9ac10ed557004e02974b8ba68e719840081c0cb0",
+    "telnet_manager.py": "a390f323a07e83b62c1d6f4cdd0acac62b3ee022",
+    "requirements.txt": "259fdb0f641f53b43bef198a96b2083c7ba6fc53",
+    "update.ps1": "6d26ef4ded54d12323f74b698d4174160978e5c3",
+    "ssh_password.py": "d085da1adfb8cbf2a2de324acafff2ce4664c14f"
   },
   "changes": [
-    "SSH login admin by default",
-    "s add NAME IP LOGIN",
-    "s edit NAME LOGIN"
+    "SSH passwords saved securely with Windows DPAPI",
+    "Automatic SSH login with saved passwords",
+    "SSH host-key verification"
   ]
 }
