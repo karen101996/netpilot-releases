@@ -4,6 +4,8 @@ import ipaddress
 import json
 import msvcrt
 import re
+import shutil
+import subprocess
 import sys
 import time
 import urllib.request
@@ -13,12 +15,31 @@ from pathlib import Path
 import telnetlib3
 import win32crypt
 
+def configure_console_encoding():
+    """Prefer UTF-8 for multilingual messages in Windows terminals."""
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            try:
+                stream.reconfigure(encoding="utf-8", errors="replace")
+            except (OSError, ValueError, TypeError):
+                pass
+
+
 BASE = Path.home() / "TelnetManager"
 STORE = BASE / "credentials.json"
 
 # Aliases are separate from encrypted per-IP credentials.
 ADDRESS_BOOK = BASE / "devices.json"
 RESERVED = {"add", "list", "search", "help", "ping", "backup", "history", "update", "doctor"}
+
+PROTOCOLS = BASE / "device_protocols.json"
+LAUNCHER_DIR = Path.home() / "bin"
+WINDOWS_COMMANDS = {"cmd", "powershell", "pwsh", "explorer", "control", "regedit",
+                    "notepad", "calc", "taskmgr", "services", "msconfig", "mstsc",
+                    "ping", "ipconfig", "net", "netsh", "ssh", "telnet", "python",
+                    "py", "where", "start", "exit", "dir", "copy", "del", "type",
+                    "cls", "cd", "t", "s", "np", "netpilot", "con", "prn", "aux",
+                    "nul", "com1", "lpt1"}
 
 def load_devices():
     if not ADDRESS_BOOK.exists():
@@ -28,20 +49,91 @@ def load_devices():
         raise ValueError("Invalid device address book")
     return data
 
-def add_device(alias, ip):
-    if not re.fullmatch(r"[A-Za-z][A-Za-z0-9_-]{0,39}", alias) or alias.lower() in RESERVED:
-        raise ValueError("Alias must start with a letter, use letters/digits/-/_, and not be a command")
+def load_protocols():
+    if not PROTOCOLS.exists():
+        return {}
+    data = json.loads(PROTOCOLS.read_text(encoding="utf-8"))
+    if not isinstance(data, dict) or any(k not in load_devices() or v not in ("telnet", "ssh")
+                                           for k, v in data.items()):
+        raise ValueError("Invalid device protocols")
+    return data
+
+def _save_json(path, data):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temp = path.with_suffix(".tmp")
+    temp.write_text(json.dumps(data, indent=2), encoding="utf-8")
+    temp.replace(path)
+
+def _launcher_path(alias):
+    return LAUNCHER_DIR / (alias + ".cmd")
+
+def _check_alias(alias):
+    if not re.fullmatch(r"[A-Za-z][A-Za-z0-9_-]{0,39}", alias):
+        raise ValueError("Alias must start with a letter and contain only letters, digits, - or _")
+    if alias.lower() in RESERVED | WINDOWS_COMMANDS:
+        raise ValueError("Alias conflicts with a Windows or NetPilot command")
+    launcher = _launcher_path(alias.lower())
+    if launcher.exists() or any(LAUNCHER_DIR.glob(alias.lower() + ".*")):
+        raise ValueError("A command with this name already exists in the NetPilot launcher folder")
+    if shutil.which(alias) or any(shutil.which(alias + ext) for ext in (".cmd", ".bat", ".exe", ".com")):
+        raise ValueError("Alias conflicts with an existing command on PATH")
+    # Windows Run also resolves executables from the Windows and System32 directories.
+    for folder in (Path.home(), Path(__import__("os").environ.get("WINDIR", "C:/Windows")),
+                   Path(__import__("os").environ.get("WINDIR", "C:/Windows")) / "System32"):
+        if any((folder / (alias + ext)).exists() for ext in (".cmd", ".bat", ".exe", ".com")):
+            raise ValueError("Alias conflicts with an existing Windows command")
+
+def _create_launcher(alias, protocol):
+    """Generate a fixed launcher: no user-controlled shell arguments."""
+    if protocol not in ("telnet", "ssh"):
+        raise ValueError("Unsupported protocol")
+    launcher = _launcher_path(alias)
+    if launcher.exists():
+        raise ValueError("Launcher already exists; refusing to overwrite it")
+    launcher.parent.mkdir(parents=True, exist_ok=True)
+    mode = " --ssh" if protocol == "ssh" else ""
+    script = ('@echo off\r\n'
+              '"%LOCALAPPDATA%\\NetPilot\\.venv\\Scripts\\python.exe" '
+              '"%LOCALAPPDATA%\\NetPilot\\telnet_manager.py"' + mode + ' ' + alias + '\r\n'
+              'if errorlevel 1 pause\r\n')
+    with launcher.open("x", encoding="ascii", newline="") as handle:
+        handle.write(script)
+    return launcher
+
+def add_device(alias, ip, protocol="telnet"):
+    alias = alias.lower()
     ipaddress.ip_address(ip)
+    if protocol not in ("telnet", "ssh"):
+        raise ValueError("Protocol must be telnet or ssh")
     devices = load_devices()
-    key = alias.lower()
-    if key in devices:
-        raise ValueError(f"Alias '{key}' already exists for {devices[key]}; choose another name")
-    devices[key] = ip
-    BASE.mkdir(parents=True, exist_ok=True)
-    temp = ADDRESS_BOOK.with_suffix(".tmp")
-    temp.write_text(json.dumps(devices, indent=2), encoding="utf-8")
-    temp.replace(ADDRESS_BOOK)
-    print(f"Saved: {key} -> {ip}")
+    if alias in devices:
+        raise ValueError(f"Alias '{alias}' already exists for {devices[alias]}; choose another name")
+    _check_alias(alias)
+    protocols = load_protocols()
+    launcher = _create_launcher(alias, protocol)
+    try:
+        devices[alias] = ip
+        protocols[alias] = protocol
+        _save_json(ADDRESS_BOOK, devices)
+        _save_json(PROTOCOLS, protocols)
+    except Exception:
+        launcher.unlink(missing_ok=True)
+        raise
+    print(f"Saved: {alias} -> {ip} ({protocol}). Win+R: {alias}")
+
+def sync_launchers():
+    """Safely create launchers for existing aliases after an upgrade."""
+    devices = load_devices()
+    protocols = load_protocols()
+    created = 0
+    for alias in devices:
+        try:
+            _check_alias(alias)
+            _create_launcher(alias, protocols.get(alias, "telnet"))
+            created += 1
+        except (ValueError, OSError) as exc:
+            print(f"Skipped launcher {alias}: {exc}")
+    print(f"NetPilot launchers created: {created}")
 
 def list_devices(query=None):
     devices = load_devices()
@@ -288,17 +380,236 @@ async def connect(ip, port=23, reset=False):
         await writer.wait_closed()
 
 
+
+def ssh_connect(ip, port=22, username=None):
+    """Use Windows OpenSSH: native terminal, host-key verification and key auth."""
+    ssh = shutil.which("ssh.exe") or shutil.which("ssh")
+    if not ssh:
+        raise RuntimeError("OpenSSH Client not found. Install Windows OpenSSH Client.")
+    destination = f"{username}@{ip}" if username else ip
+    check_updates()
+    print(f"SSH connecting to {destination}:{port}...")
+    result = subprocess.run([ssh, "-o", "StrictHostKeyChecking=ask",
+                             "-o", "UserKnownHostsFile=" + str(Path.home() / ".ssh" / "known_hosts"),
+                             "-p", str(port), destination], check=False)
+    if result.returncode:
+        print(f"SSH exited with status {result.returncode}")
+
+SETTINGS = BASE / "settings.json"
+LANGUAGES = ("ru", "en", "uz")
+MESSAGES = {
+    "ru": {
+        "title": "NetPilot — справка по командам",
+        "connection": "Подключение к оборудованию",
+        "devices": "Адресная книга и быстрый запуск через Win+R",
+        "management": "Управление NetPilot",
+        "telnet": "Telnet по IP или имени устройства",
+        "ssh": "SSH по IP или имени устройства",
+        "add_t": "Добавить устройство с протоколом Telnet",
+        "add_s": "Добавить устройство с протоколом SSH",
+        "list": "Показать сохранённые устройства",
+        "search": "Найти устройство по имени или IP",
+        "reset": "Сбросить сохранённый пароль Telnet",
+        "user": "Указать пользователя SSH",
+        "winr": "Win+R, затем имя устройства — быстрое подключение",
+        "help": "Показать эту справку",
+        "language": "Изменить язык интерфейса: ru, en, uz",
+        "version": "Показать установленную версию",
+        "update": "Проверить и установить обновление",
+        "changed": "Язык интерфейса: {language}",
+        "invalid": "Неизвестный язык. Доступны: ru, en, uz",
+        "usage": "Использование: np language ru|en|uz",
+        "unknown": "Неизвестная команда. Выполните np help",
+    },
+    "en": {
+        "title": "NetPilot — command reference",
+        "connection": "Connect to network devices",
+        "devices": "Address book and quick launch from Win+R",
+        "management": "Manage NetPilot",
+        "telnet": "Telnet using an IP address or device alias",
+        "ssh": "SSH using an IP address or device alias",
+        "add_t": "Add a device using Telnet",
+        "add_s": "Add a device using SSH",
+        "list": "List saved devices",
+        "search": "Search by device name or IP",
+        "reset": "Reset saved Telnet credentials",
+        "user": "Specify the SSH username",
+        "winr": "Win+R, then type the device alias to connect",
+        "help": "Show this command reference",
+        "language": "Change interface language: ru, en, uz",
+        "version": "Show the installed version",
+        "update": "Check for and install updates",
+        "changed": "Interface language: {language}",
+        "invalid": "Unknown language. Available: ru, en, uz",
+        "usage": "Usage: np language ru|en|uz",
+        "unknown": "Unknown command. Run np help",
+    },
+    "uz": {
+        "title": "NetPilot — buyruqlar bo‘yicha yordam",
+        "connection": "Tarmoq qurilmalariga ulanish",
+        "devices": "Qurilmalar ro‘yxati va Win+R orqali tezkor ulanish",
+        "management": "NetPilot boshqaruvi",
+        "telnet": "IP manzil yoki qurilma nomi orqali Telnet",
+        "ssh": "IP manzil yoki qurilma nomi orqali SSH",
+        "add_t": "Telnet qurilmasini qo‘shish",
+        "add_s": "SSH qurilmasini qo‘shish",
+        "list": "Saqlangan qurilmalarni ko‘rsatish",
+        "search": "Qurilmani nomi yoki IP bo‘yicha qidirish",
+        "reset": "Telnet parolini qayta kiritish",
+        "user": "SSH foydalanuvchi nomini ko‘rsatish",
+        "winr": "Win+R, so‘ng qurilma nomini kiriting",
+        "help": "Buyruqlar bo‘yicha yordam",
+        "language": "Interfeys tilini o‘zgartirish: ru, en, uz",
+        "version": "O‘rnatilgan versiyani ko‘rsatish",
+        "update": "Yangilanishlarni tekshirish va o‘rnatish",
+        "changed": "Interfeys tili: {language}",
+        "invalid": "Noma’lum til. Mavjud: ru, en, uz",
+        "usage": "Foydalanish: np language ru|en|uz",
+        "unknown": "Noma’lum buyruq. np help buyrug‘ini kiriting",
+    },
+}
+
+def current_language():
+    try:
+        data = json.loads(SETTINGS.read_text(encoding="utf-8"))
+        return data.get("language", "ru") if data.get("language") in LANGUAGES else "ru"
+    except (OSError, ValueError, TypeError):
+        return "ru"
+
+def _help_color(text, color):
+    """Color only real interactive terminals; keep logs and tests readable."""
+    if not getattr(sys.stdout, "isatty", lambda: False)():
+        return text
+    if sys.platform == "win32":
+        try:
+            import ctypes
+            handle = ctypes.windll.kernel32.GetStdHandle(-11)
+            mode = ctypes.c_uint32()
+            if not ctypes.windll.kernel32.GetConsoleMode(handle, ctypes.byref(mode)):
+                return text
+            if not ctypes.windll.kernel32.SetConsoleMode(handle, mode.value | 0x0004):
+                return text
+        except (AttributeError, OSError):
+            return text
+    return f"\\033[{color}m{text}\\033[0m"
+
+
+def netpilot_help():
+    """A readable, localized terminal dashboard without extra dependencies."""
+    m = MESSAGES[current_language()]
+    language = current_language()
+    title = {"ru": "Справка по командам", "en": "Command reference",
+             "uz": "Buyruqlar bo‘yicha yordam"}[language]
+    labels = {
+        "ru": ("Примеры", "Язык", "Быстрый запуск", "Вводите имя устройства через Win+R"),
+        "en": ("Examples", "Language", "Quick launch", "Type a device alias in Win+R"),
+        "uz": ("Misollar", "Til", "Tezkor ulanish", "Win+R orqali qurilma nomini kiriting"),
+    }
+    examples_label, language_label, quick_label, quick_note = labels[language]
+    sections = [
+        (m["connection"], [
+            ("t IP [PORT]", m["telnet"]),
+            ("s IP [PORT]", m["ssh"]),
+            ("s IP --user LOGIN", m["user"]),
+            ("t IP --reset", m["reset"]),
+        ]),
+        (m["devices"], [
+            ("t add NAME IP", m["add_t"]),
+            ("s add NAME IP", m["add_s"]),
+            ("t list / s list", m["list"]),
+            ("t search QUERY", m["search"]),
+            ("t NAME / s NAME", m["winr"]),
+        ]),
+        (m["management"], [
+            ("np help", m["help"]),
+            ("np language ru|en|uz", m["language"]),
+            ("np version", m["version"]),
+            ("np update", m["update"]),
+        ]),
+        (examples_label, [
+            ("t 192.168.1.10", "Telnet"),
+            ("s 192.168.88.1", "SSH"),
+            ("t add office 192.168.1.10", "office"),
+            ("s add router 192.168.88.1", "router"),
+            ("Win+R: office", "Telnet"),
+            ("Win+R: router", "SSH"),
+        ]),
+    ]
+    width = 94
+    inner = width - 4
+    command_width = 31
+    print()
+    print(_help_color("  NetPilot", "1;36") + "  " + title)
+    print("  " + language_label + ": " + language.upper() +
+          "    np language ru|en|uz")
+    print(_help_color("╔" + "═" * (width - 2) + "╗", "36"))
+    for heading, items in sections:
+        print(_help_color("║ ", "36") +
+              _help_color(heading.ljust(inner), "1;33") + _help_color(" ║", "36"))
+        print(_help_color("╟" + "─" * (width - 2) + "╢", "36"))
+        for command, description in items:
+            # Truncate only the description, never the actual command.
+            available = inner - command_width
+            desc = description[:available]
+            print(_help_color("║ ", "36") +
+                  _help_color(("  " + command).ljust(command_width), "1;36") +
+                  desc.ljust(available) + _help_color(" ║", "36"))
+        print(_help_color("╟" + "─" * (width - 2) + "╢", "36"))
+    print(_help_color("║ ", "36") +
+          (quick_label + ": " + quick_note)[:inner].ljust(inner) +
+          _help_color(" ║", "36"))
+    print(_help_color("╚" + "═" * (width - 2) + "╝", "36"))
+    print()
+
+
+def np_main(args):
+    command = args[0].lower() if args else "help"
+    if command in ("help", "-h", "--help") and len(args) <= 1:
+        netpilot_help()
+    elif command == "language":
+        if len(args) != 2:
+            print(MESSAGES[current_language()]["usage"])
+            return
+        language = args[1].lower()
+        if language not in LANGUAGES:
+            print(MESSAGES[current_language()]["invalid"])
+            return
+        _save_json(SETTINGS, {"language": language})
+        print(MESSAGES[language]["changed"].format(language=language))
+    elif command == "version" and len(args) == 1:
+        manifest = Path(__import__("os").environ.get("LOCALAPPDATA", str(Path.home() / "AppData/Local"))) / "NetPilot" / "version.json"
+        try:
+            version = json.loads(manifest.read_text(encoding="utf-8"))["version"]
+        except (OSError, ValueError, KeyError):
+            version = "unknown"
+        print("NetPilot " + str(version))
+    else:
+        print(MESSAGES[current_language()]["unknown"])
+
 def main():
     args = sys.argv[1:]
-    if not args or args[0].lower() in ("help", "--help", "-h"):
-        print("NetPilot: t IP [PORT] [--reset] | t ALIAS | t add NAME IP | t list | t search QUERY")
+    if args and args[0] == "--np":
+        np_main(args[1:])
         return
+    if not args or args[0].lower() in ("help", "--help", "-h"):
+        print("NetPilot: t IP [PORT] [--reset] | s IP [PORT] [--user LOGIN] | t/s ALIAS | t/s add NAME IP | t/s list | t/s search QUERY")
+        return
+    if args == ["--sync-launchers"]:
+        sync_launchers()
+        return
+    ssh_mode = False
+    if args[0] == "--ssh":
+        ssh_mode = True
+        args = args[1:]
+        if not args:
+            print("Usage: s IP [PORT] [--user LOGIN] | s ALIAS | s list | s add NAME IP")
+            return
     command = args[0].lower()
     try:
         if command == "add":
             if len(args) != 3:
                 raise ValueError("Usage: t add NAME IP")
-            add_device(args[1], args[2])
+            add_device(args[1], args[2], "ssh" if ssh_mode else "telnet")
             return
         if command == "list":
             if len(args) != 1:
@@ -314,15 +625,26 @@ def main():
             raise ValueError(f"Command '{command}' is not available yet")
         ip = resolve_device(args[0])
         reset = False
-        port = 23
-        for arg in args[1:]:
+        port = 22 if ssh_mode else 23
+        username = None
+        options = iter(args[1:])
+        for arg in options:
             if arg == "--reset":
+                if ssh_mode:
+                    raise ValueError("SSH credentials are managed by OpenSSH; --reset is not supported yet")
                 reset = True
+            elif arg == "--user" and ssh_mode:
+                username = next(options, None)
+                if not username or not re.fullmatch(r"[A-Za-z0-9_.-]+", username):
+                    raise ValueError("Usage: s IP --user LOGIN")
             elif arg.isdigit() and 1 <= int(arg) <= 65535:
                 port = int(arg)
             else:
                 raise ValueError(f"Invalid option: {arg}")
-        asyncio.run(connect(ip, port, reset))
+        if ssh_mode:
+            ssh_connect(ip, port, username)
+        else:
+            asyncio.run(connect(ip, port, reset))
     except (ValueError, OSError, json.JSONDecodeError) as exc:
         print(f"NetPilot: {exc}")
     except KeyboardInterrupt:
@@ -332,4 +654,5 @@ def main():
 
 
 if __name__ == "__main__":
+    configure_console_encoding()
     main()
