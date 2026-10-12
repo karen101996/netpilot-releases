@@ -415,12 +415,16 @@ async def connect(ip, port=23, reset=False):
 
 
 
-def ssh_connect(ip, port=22, username=None):
+def ssh_connect(ip, port=22, username=None, reset=False):
     """Connect with a saved, DPAPI-protected SSH password."""
     from ssh_password import connect as password_connect
     username = username or "admin"
     key = f"{username}@{ip}:{port}"
     saved = json.loads(SSH_PASSWORDS.read_text(encoding="utf-8")) if SSH_PASSWORDS.exists() else {}
+    if reset and key in saved:
+        saved.pop(key)
+        _save_json(SSH_PASSWORDS, saved)
+        print("Saved SSH password cleared. Enter the new password.")
     password = None
     if key in saved:
         try:
@@ -560,6 +564,7 @@ def netpilot_help():
             ("s IP [PORT]", m["ssh"]),
             ("s IP --user LOGIN", m["user"]),
             ("t IP --reset", m["reset"]),
+            ("s NAME --reset", m["reset"]),
         ]),
         (m["devices"], [
             ("t add NAME IP", m["add_t"]),
@@ -641,7 +646,7 @@ def main():
         np_main(args[1:])
         return
     if not args or args[0].lower() in ("help", "--help", "-h"):
-        print("NetPilot: t IP [PORT] [--reset] | s IP [PORT] [--user LOGIN] | t/s ALIAS | t/s add NAME IP [LOGIN] | s edit NAME LOGIN | t/s list | t/s search QUERY")
+        print("NetPilot: t IP [PORT] [--reset] | s IP [PORT] [--user LOGIN] [--reset] | t/s ALIAS | t/s add NAME IP [LOGIN] | s edit NAME LOGIN | t/s list | t/s search QUERY")
         return
     if args == ["--sync-launchers"]:
         sync_launchers()
@@ -686,7 +691,7 @@ def main():
         for arg in options:
             if arg == "--reset":
                 if ssh_mode:
-                    raise ValueError("SSH credentials are managed by OpenSSH; --reset is not supported yet")
+                    reset = True
                 reset = True
             elif arg == "--user" and ssh_mode:
                 username = next(options, None)
@@ -698,7 +703,10 @@ def main():
                 raise ValueError(f"Invalid option: {arg}")
         if ssh_mode:
             username = username or load_ssh_users().get(args[0].lower(), "admin")
-            ssh_connect(ip, port, username)
+            if reset:
+                ssh_connect(ip, port, username, reset=True)
+            else:
+                ssh_connect(ip, port, username)
         else:
             asyncio.run(connect(ip, port, reset))
     except (ValueError, OSError, json.JSONDecodeError) as exc:
