@@ -1,2 +1,3 @@
 telnetlib3>=2.0,<6
 pywin32>=300
+paramiko>=3.4,<5
