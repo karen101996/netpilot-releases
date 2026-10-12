@@ -38,7 +38,7 @@ if (-not $python) {
   }
   $installerName = "python-$pythonVersion-$architecture.exe"
   $downloadUrl = "https://www.python.org/ftp/python/$pythonVersion/$installerName"
-  $downloadDir = Join-Path $env:TEMP 'NetPilot-Setup'
+  $downloadDir = Join-Path $env:TEMP 'RAVLAN-Setup'
   New-Item -ItemType Directory -Force -Path $downloadDir | Out-Null
   $installerPath = Join-Path $downloadDir $installerName
   Write-Host "Python not found. Downloading Python $pythonVersion from python.org..." -ForegroundColor Cyan
