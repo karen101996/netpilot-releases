@@ -1,7 +1,5 @@
 <div align="center">
 
-<img src="assets/netpilot-banner.svg" alt="NetPilot — Telnet & SSH access for Windows" width="100%" />
-
 # NetPilot
 
 ### Fast, secure-by-default device access for Windows
