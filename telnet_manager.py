@@ -616,7 +616,7 @@ def ravlan_help():
     print()
 
 
-def np_main(args):
+def rv_main(args):
     command = args[0].lower() if args else "help"
     if command in ("help", "-h", "--help") and len(args) <= 1:
         ravlan_help()
@@ -642,8 +642,8 @@ def np_main(args):
 
 def main():
     args = sys.argv[1:]
-    if args and args[0] == "--np":
-        np_main(args[1:])
+    if args and args[0] in ("--rv", "--np"):
+        rv_main(args[1:])
         return
     if not args or args[0].lower() in ("help", "--help", "-h"):
         print("RAVLAN: t IP [PORT] [--reset] | s IP [PORT] [--user LOGIN] [--reset] | t/s ALIAS | t/s add NAME IP [LOGIN] | s edit NAME LOGIN | t/s list | t/s search QUERY")
