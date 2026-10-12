@@ -11,7 +11,7 @@
 [![Update channel](https://img.shields.io/badge/updates-GitHub%20API-24292f?logo=github)](https://github.com/karen101996/netpilot-releases)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 
-[**Download ZIP**](https://github.com/karen101996/netpilot-releases/archive/refs/heads/main.zip) · [**Quick start**](#quick-start) · [**Commands**](#commands) · [**Русский**](#на-русском)
+[**Download ZIP**](https://github.com/karen101996/netpilot-releases/archive/refs/heads/main.zip) · [**Quick start**](#quick-start) · [**Commands**](#commands) · [**Roadmap**](ROADMAP.md) · [**Русский**](#на-русском)
 
 </div>
 
@@ -123,6 +123,13 @@ The updater uses the **public GitHub API**, so end users do **not** need GitHub 
 - **Transport security:** **Telnet is unencrypted.** DPAPI protects passwords *at rest*, **not** while they travel over Telnet. Use NetPilot only on trusted, isolated management networks. Prefer SSH where supported.
 
 The distribution scripts in this repository are public and readable. The development repository is separate.
+
+## Project resources
+
+- [Roadmap](ROADMAP.md) — upcoming features and development stages
+- [Changelog](CHANGELOG.md) — release history
+- [Security policy](SECURITY.md) — security limitations and vulnerability reports
+- [Contributing](CONTRIBUTING.md) — bug reports and feature requests
 
 ## Troubleshooting
 
