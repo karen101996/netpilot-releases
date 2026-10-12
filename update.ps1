@@ -40,7 +40,7 @@ try {
     Write-Host 'Already up to date.' -ForegroundColor Green
     exit 0
   }
-  foreach ($file in @('install.ps1','telnet_manager.py','requirements.txt','update.ps1')) {
+  foreach ($file in @('install.ps1','telnet_manager.py','ssh_password.py','requirements.txt','update.ps1')) {
     $expected = [string]$manifest.files.$file
     if ($expected -notmatch '^[0-9a-f]{40}$') { throw "Invalid checksum for $file" }
     $target = Join-Path $staging $file
