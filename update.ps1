@@ -1,10 +1,19 @@
 $ErrorActionPreference = 'Stop'
 $releaseRepo = 'karen101996/netpilot-releases'
-$base = "https://raw.githubusercontent.com/$releaseRepo/main"
+$apiBase = "https://api.github.com/repos/$releaseRepo/contents"
 $root = Join-Path $env:LOCALAPPDATA 'NetPilot'
 $staging = Join-Path ([IO.Path]::GetTempPath()) ('netpilot-' + [guid]::NewGuid().ToString('N'))
-function Download-Bytes([string]$url, [string]$path) {
-  Invoke-WebRequest -Uri $url -UseBasicParsing -TimeoutSec 30 -OutFile $path
+function Download-ReleaseFile([string]$file, [string]$path) {
+  $headers = @{ 'User-Agent' = 'NetPilot-Updater'; 'Accept' = 'application/vnd.github+json' }
+  $response = Invoke-RestMethod -Uri "$apiBase/$file" -Headers $headers -TimeoutSec 30
+  if (-not $response.content -or $response.encoding -ne 'base64') {
+    throw "GitHub API did not return base64 content for $file"
+  }
+  $bytes = [Convert]::FromBase64String(($response.content -replace '\s', ''))
+  [IO.File]::WriteAllBytes($path, $bytes)
+  if ($response.sha -and (Git-Blob-Sha $path) -ne $response.sha) {
+    throw "GitHub API SHA mismatch: $file"
+  }
 }
 function Git-Blob-Sha([string]$path) {
   $bytes = [IO.File]::ReadAllBytes($path)
@@ -18,7 +27,7 @@ function Git-Blob-Sha([string]$path) {
 }
 New-Item -ItemType Directory -Path $staging -Force | Out-Null
 try {
-  Download-Bytes "$base/version.json" (Join-Path $staging 'version.json')
+  Download-ReleaseFile "version.json" (Join-Path $staging 'version.json')
   $manifest = Get-Content (Join-Path $staging 'version.json') -Raw | ConvertFrom-Json
   if (-not $manifest.version -or -not $manifest.files) { throw 'Invalid release manifest.' }
   $installedVersion = '0.0.0'
@@ -35,7 +44,7 @@ try {
     $expected = [string]$manifest.files.$file
     if ($expected -notmatch '^[0-9a-f]{40}$') { throw "Invalid checksum for $file" }
     $target = Join-Path $staging $file
-    Download-Bytes "$base/$file" $target
+    Download-ReleaseFile $file $target
     if ((Git-Blob-Sha $target) -ne $expected) { throw "Checksum mismatch for $file. Try again later." }
   }
   Write-Host "Verified release $($manifest.version). Installing..." -ForegroundColor Cyan
