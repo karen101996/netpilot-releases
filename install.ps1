@@ -100,12 +100,16 @@ $sshCmd = '@echo off' + "`r`n" +
 Set-Content -Path (Join-Path $bin 's.cmd') -Value $sshCmd -Encoding ASCII
 & $venvPython $current --sync-launchers
 if ($LASTEXITCODE -ne 0) { Write-Warning 'Some existing device launchers could not be synchronized.' }
-$npCmd = '@echo off' + "`r`n" +
-  'if /I "%~1"=="update" goto update' + "`r`n" +
-  '"%LOCALAPPDATA%\NetPilot\.venv\Scripts\python.exe" "%LOCALAPPDATA%\NetPilot\telnet_manager.py" --np %*' + "`r`n" +
-  'exit /b %errorlevel%' + "`r`n" +
-  ':update' + "`r`n" +
-  'powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%LOCALAPPDATA%\NetPilot\update.ps1"' + "`r`n"
+$npLines = @(
+  '@echo off'
+  'if /I "%~1"=="update" goto :update'
+  '"%LOCALAPPDATA%\NetPilot\.venv\Scripts\python.exe" "%LOCALAPPDATA%\NetPilot\telnet_manager.py" --np %*'
+  'exit /b %errorlevel%'
+  ':update'
+  'powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "%LOCALAPPDATA%\NetPilot\update.ps1"'
+  'exit /b %errorlevel%'
+)
+$npCmd = ($npLines -join "`r`n") + "`r`n"
 Set-Content -Path (Join-Path $bin 'np.cmd') -Value $npCmd -Encoding ASCII
 
 # A t.bat in the user profile takes precedence when CMD starts there.
