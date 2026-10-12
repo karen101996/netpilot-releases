@@ -40,7 +40,7 @@ WINDOWS_COMMANDS = {"cmd", "powershell", "pwsh", "explorer", "control", "regedit
                     "notepad", "calc", "taskmgr", "services", "msconfig", "mstsc",
                     "ping", "ipconfig", "net", "netsh", "ssh", "telnet", "python",
                     "py", "where", "start", "exit", "dir", "copy", "del", "type",
-                    "cls", "cd", "t", "s", "np", "netpilot", "con", "prn", "aux",
+                    "cls", "cd", "t", "s", "np", "rv", "ravlan", "con", "prn", "aux",
                     "nul", "com1", "lpt1"}
 
 def load_devices():
@@ -97,10 +97,10 @@ def _check_alias(alias):
     if not re.fullmatch(r"[A-Za-z][A-Za-z0-9_-]{0,39}", alias):
         raise ValueError("Alias must start with a letter and contain only letters, digits, - or _")
     if alias.lower() in RESERVED | WINDOWS_COMMANDS:
-        raise ValueError("Alias conflicts with a Windows or NetPilot command")
+        raise ValueError("Alias conflicts with a Windows or RAVLAN command")
     launcher = _launcher_path(alias.lower())
     if launcher.exists() or any(LAUNCHER_DIR.glob(alias.lower() + ".*")):
-        raise ValueError("A command with this name already exists in the NetPilot launcher folder")
+        raise ValueError("A command with this name already exists in the RAVLAN launcher folder")
     if shutil.which(alias) or any(shutil.which(alias + ext) for ext in (".cmd", ".bat", ".exe", ".com")):
         raise ValueError("Alias conflicts with an existing command on PATH")
     # Windows Run also resolves executables from the Windows and System32 directories.
@@ -167,7 +167,7 @@ def sync_launchers():
             created += 1
         except (ValueError, OSError) as exc:
             print(f"Skipped launcher {alias}: {exc}")
-    print(f"NetPilot launchers created: {created}")
+    print(f"RAVLAN launchers created: {created}")
 
 def list_devices(query=None):
     devices = load_devices()
@@ -336,10 +336,10 @@ def check_updates():
         local = json.loads(manifest.read_text(encoding="utf-8"))["version"]
         cached = json.loads(cache.read_text(encoding="utf-8")) if cache.exists() else {}
         if time.time() - cached.get("checked_at", 0) > 86400:
-            url = ("https://api.github.com/repos/karen101996/netpilot-releases/contents/version.json"
+            url = ("https://api.github.com/repos/karen101996/ravlan-releases/contents/version.json"
                    f"?ref=main&nocache={time.time_ns()}")
             request = urllib.request.Request(url, headers={
-                "User-Agent": "NetPilot", "Accept": "application/vnd.github+json"
+                "User-Agent": "RAVLAN", "Accept": "application/vnd.github+json"
             })
             with urllib.request.urlopen(request, timeout=3) as response:
                 item = json.loads(response.read(65536).decode("utf-8"))
@@ -350,8 +350,8 @@ def check_updates():
         def parts(value):
             return tuple(int(x) for x in value.split("."))
         if parts(remote) > parts(local):
-            print(f"\\n[UPDATE] NetPilot v{remote} available (installed: v{local})")
-            print("Run: np update\\n")
+            print(f"\\n[UPDATE] RAVLAN v{remote} available (installed: v{local})")
+            print("Run: rv update\\n")
     except (OSError, ValueError, KeyError, TimeoutError):
         pass
 
@@ -451,10 +451,10 @@ SETTINGS = BASE / "settings.json"
 LANGUAGES = ("ru", "en", "uz")
 MESSAGES = {
     "ru": {
-        "title": "NetPilot — справка по командам",
+        "title": "RAVLAN — справка по командам",
         "connection": "Подключение к оборудованию",
         "devices": "Адресная книга и быстрый запуск через Win+R",
-        "management": "Управление NetPilot",
+        "management": "Управление RAVLAN",
         "telnet": "Telnet по IP или имени устройства",
         "ssh": "SSH по IP или имени устройства",
         "add_t": "Добавить устройство с протоколом Telnet",
@@ -470,14 +470,14 @@ MESSAGES = {
         "update": "Проверить и установить обновление",
         "changed": "Язык интерфейса: {language}",
         "invalid": "Неизвестный язык. Доступны: ru, en, uz",
-        "usage": "Использование: np language ru|en|uz",
-        "unknown": "Неизвестная команда. Выполните np help",
+        "usage": "Использование: rv language ru|en|uz",
+        "unknown": "Неизвестная команда. Выполните rv help",
     },
     "en": {
-        "title": "NetPilot — command reference",
+        "title": "RAVLAN — command reference",
         "connection": "Connect to network devices",
         "devices": "Address book and quick launch from Win+R",
-        "management": "Manage NetPilot",
+        "management": "Manage RAVLAN",
         "telnet": "Telnet using an IP address or device alias",
         "ssh": "SSH using an IP address or device alias",
         "add_t": "Add a device using Telnet",
@@ -493,14 +493,14 @@ MESSAGES = {
         "update": "Check for and install updates",
         "changed": "Interface language: {language}",
         "invalid": "Unknown language. Available: ru, en, uz",
-        "usage": "Usage: np language ru|en|uz",
-        "unknown": "Unknown command. Run np help",
+        "usage": "Usage: rv language ru|en|uz",
+        "unknown": "Unknown command. Run rv help",
     },
     "uz": {
-        "title": "NetPilot — buyruqlar bo‘yicha yordam",
+        "title": "RAVLAN — buyruqlar bo‘yicha yordam",
         "connection": "Tarmoq qurilmalariga ulanish",
         "devices": "Qurilmalar ro‘yxati va Win+R orqali tezkor ulanish",
-        "management": "NetPilot boshqaruvi",
+        "management": "RAVLAN boshqaruvi",
         "telnet": "IP manzil yoki qurilma nomi orqali Telnet",
         "ssh": "IP manzil yoki qurilma nomi orqali SSH",
         "add_t": "Telnet qurilmasini qo‘shish",
@@ -516,8 +516,8 @@ MESSAGES = {
         "update": "Yangilanishlarni tekshirish va o‘rnatish",
         "changed": "Interfeys tili: {language}",
         "invalid": "Noma’lum til. Mavjud: ru, en, uz",
-        "usage": "Foydalanish: np language ru|en|uz",
-        "unknown": "Noma’lum buyruq. np help buyrug‘ini kiriting",
+        "usage": "Foydalanish: rv language ru|en|uz",
+        "unknown": "Noma’lum buyruq. rv help buyrug‘ini kiriting",
     },
 }
 
@@ -546,7 +546,7 @@ def _help_color(text, color):
     return f"\x1b[{color}m{text}\x1b[0m"
 
 
-def netpilot_help():
+def ravlan_help():
     """A readable, localized terminal dashboard without extra dependencies."""
     m = MESSAGES[current_language()]
     language = current_language()
@@ -575,10 +575,10 @@ def netpilot_help():
             ("t NAME / s NAME", m["winr"]),
         ]),
         (m["management"], [
-            ("np help", m["help"]),
-            ("np language ru|en|uz", m["language"]),
-            ("np version", m["version"]),
-            ("np update", m["update"]),
+            ("rv help", m["help"]),
+            ("rv language ru|en|uz", m["language"]),
+            ("rv version", m["version"]),
+            ("rv update", m["update"]),
         ]),
         (examples_label, [
             ("t 192.168.1.10", "Telnet"),
@@ -593,9 +593,9 @@ def netpilot_help():
     inner = width - 4
     command_width = 31
     print()
-    print(_help_color("  NetPilot", "1;36") + "  " + title)
+    print(_help_color("  RAVLAN", "1;36") + "  " + title)
     print("  " + language_label + ": " + language.upper() +
-          "    np language ru|en|uz")
+          "    rv language ru|en|uz")
     print(_help_color("╔" + "═" * (width - 2) + "╗", "36"))
     for heading, items in sections:
         print(_help_color("║ ", "36") +
@@ -619,7 +619,7 @@ def netpilot_help():
 def np_main(args):
     command = args[0].lower() if args else "help"
     if command in ("help", "-h", "--help") and len(args) <= 1:
-        netpilot_help()
+        ravlan_help()
     elif command == "language":
         if len(args) != 2:
             print(MESSAGES[current_language()]["usage"])
@@ -636,7 +636,7 @@ def np_main(args):
             version = json.loads(manifest.read_text(encoding="utf-8"))["version"]
         except (OSError, ValueError, KeyError):
             version = "unknown"
-        print("NetPilot " + str(version))
+        print("RAVLAN " + str(version))
     else:
         print(MESSAGES[current_language()]["unknown"])
 
@@ -646,7 +646,7 @@ def main():
         np_main(args[1:])
         return
     if not args or args[0].lower() in ("help", "--help", "-h"):
-        print("NetPilot: t IP [PORT] [--reset] | s IP [PORT] [--user LOGIN] [--reset] | t/s ALIAS | t/s add NAME IP [LOGIN] | s edit NAME LOGIN | t/s list | t/s search QUERY")
+        print("RAVLAN: t IP [PORT] [--reset] | s IP [PORT] [--user LOGIN] [--reset] | t/s ALIAS | t/s add NAME IP [LOGIN] | s edit NAME LOGIN | t/s list | t/s search QUERY")
         return
     if args == ["--sync-launchers"]:
         sync_launchers()
@@ -710,7 +710,7 @@ def main():
         else:
             asyncio.run(connect(ip, port, reset))
     except (ValueError, OSError, json.JSONDecodeError) as exc:
-        print(f"NetPilot: {exc}")
+        print(f"RAVLAN: {exc}")
     except KeyboardInterrupt:
         print("\\nDisconnected.")
     except Exception as exc:
