@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.4.4] — 2026-10-12
+- Use `s NAME --reset` to replace a saved SSH password.
+- Keep passwords for other devices unchanged.
+- Save the replacement password only after successful SSH authentication.
+
 ## [1.4.3] — 2026-10-12
 - Save SSH passwords encrypted with Windows DPAPI after successful login.
 - Reuse saved SSH passwords automatically, including Win+R aliases.
