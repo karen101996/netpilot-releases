@@ -6,7 +6,7 @@ on:
       version:
         description: 'Release version (example: 1.2.5)'
         required: true
-        default: '1.2.5'
+        default: '1.5.0'
 
 permissions:
   contents: write
@@ -37,6 +37,14 @@ jobs:
                   sys.exit(f"Manifest mismatch: {name}")
           print("All release files match manifest.")
           PY
+      - name: Check Python syntax
+        run: python3 -m py_compile telnet_manager.py ssh_password.py
+      - name: Verify RAVLAN launchers
+        shell: bash
+        run: |
+          grep -F "'rv.cmd'" install.ps1
+          grep -F "'np.cmd'" install.ps1
+          grep -F 'ravlan-releases' update.ps1
       - name: Build distribution archive
         shell: bash
         env:
