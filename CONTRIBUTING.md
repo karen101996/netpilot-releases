@@ -1,16 +1,16 @@
-# Contributing to NetPilot
+# Contributing to RAVLAN
 
 [English](#english) · [Русский](#русский) · [O‘zbekcha](#ozbekcha)
 
-Thank you for helping improve **NetPilot**, a Windows SSH and Telnet utility. Reports from real networking environments are especially valuable.
+Thank you for helping improve **RAVLAN**, a Windows SSH and Telnet utility. Reports from real networking environments are especially valuable.
 
 ## English
 
 ### Bug reports and feature requests
 
-Use [GitHub Issues](https://github.com/karen101996/netpilot-releases/issues) for non-sensitive bugs, compatibility feedback and feature requests. Please include:
+Use [GitHub Issues](https://github.com/karen101996/ravlan-releases/issues) for non-sensitive bugs, compatibility feedback and feature requests. Please include:
 
-1. **NetPilot version:** output of `np version`.
+1. **RAVLAN version:** output of `rv version`.
 2. **System:** Windows version and terminal (CMD, PowerShell or Windows Terminal).
 3. **Connection type:** SSH or Telnet; device vendor/model and firmware version if relevant.
 4. **Reproduction steps:** commands you ran, expected behavior and what happened instead.
@@ -20,7 +20,7 @@ A useful issue title is: `[SSH] Terminal input problem on <device model>`.
 
 ### Development and pull requests
 
-This repository publishes NetPilot releases, installation scripts and update metadata. Active feature development and code review happen in a separate private repository. **Please open an issue before preparing a pull request** so we can confirm the appropriate contribution path. Do not post proprietary device configurations or credentials.
+This repository publishes RAVLAN releases, installation scripts and update metadata. Active feature development and code review happen in a separate private repository. **Please open an issue before preparing a pull request** so we can confirm the appropriate contribution path. Do not post proprietary device configurations or credentials.
 
 ### Security reports
 
@@ -30,13 +30,13 @@ This repository publishes NetPilot releases, installation scripts and update met
 
 ## Русский
 
-Спасибо за помощь в развитии **NetPilot** — утилиты для подключения к сетевому оборудованию через SSH и Telnet в Windows.
+Спасибо за помощь в развитии **RAVLAN** — утилиты для подключения к сетевому оборудованию через SSH и Telnet в Windows.
 
 ### Как сообщить об ошибке
 
-Создай обращение в разделе [GitHub Issues](https://github.com/karen101996/netpilot-releases/issues). Желательно указать:
+Создай обращение в разделе [GitHub Issues](https://github.com/karen101996/ravlan-releases/issues). Желательно указать:
 
-1. **Версию NetPilot:** результат команды `np version`.
+1. **Версию RAVLAN:** результат команды `rv version`.
 2. **Операционную систему:** версию Windows и используемый терминал (CMD, PowerShell или Windows Terminal).
 3. **Тип подключения:** SSH или Telnet, производителя и модель оборудования, при необходимости версию прошивки.
 4. **Как воспроизвести ошибку:** введённые команды, ожидаемый результат и фактическое поведение.
@@ -46,7 +46,7 @@ This repository publishes NetPilot releases, installation scripts and update met
 
 ### Как предложить улучшение
 
-Открой [новое обращение](https://github.com/karen101996/netpilot-releases/issues/new), опиши проблему, которую решит функция, и приведи пример желаемого поведения. Особенно полезны предложения, основанные на реальном опыте работы с MikroTik, коммутаторами, OLT и другим оборудованием.
+Открой [новое обращение](https://github.com/karen101996/ravlan-releases/issues/new), опиши проблему, которую решит функция, и приведи пример желаемого поведения. Особенно полезны предложения, основанные на реальном опыте работы с MikroTik, коммутаторами, OLT и другим оборудованием.
 
 ### Участие в разработке
 
@@ -60,13 +60,13 @@ This repository publishes NetPilot releases, installation scripts and update met
 
 ## O‘zbekcha
 
-**NetPilot** — Windows uchun SSH va Telnet orqali tarmoq qurilmalariga ulanish dasturini rivojlantirishga yordam berganingiz uchun rahmat.
+**RAVLAN** — Windows uchun SSH va Telnet orqali tarmoq qurilmalariga ulanish dasturini rivojlantirishga yordam berganingiz uchun rahmat.
 
 ### Xatolik haqida xabar berish
 
-[GitHub Issues](https://github.com/karen101996/netpilot-releases/issues) bo‘limida yangi murojaat yarating va quyidagilarni ko‘rsating:
+[GitHub Issues](https://github.com/karen101996/ravlan-releases/issues) bo‘limida yangi murojaat yarating va quyidagilarni ko‘rsating:
 
-1. **NetPilot versiyasi:** `np version` buyrug‘i natijasi.
+1. **RAVLAN versiyasi:** `rv version` buyrug‘i natijasi.
 2. **Tizim:** Windows versiyasi va ishlatilayotgan terminal (CMD, PowerShell yoki Windows Terminal).
 3. **Ulanish turi:** SSH yoki Telnet, qurilma ishlab chiqaruvchisi va modeli, kerak bo‘lsa proshivka versiyasi.
 4. **Xatoni takrorlash:** kiritilgan buyruqlar, kutilgan natija va amalda yuz bergan holat.
@@ -76,7 +76,7 @@ Murojaat sarlavhasiga misol: `[SSH] <qurilma modeli> da buyruq kiritish muammosi
 
 ### Yangi imkoniyat taklif qilish
 
-[GitHub Issues](https://github.com/karen101996/netpilot-releases/issues/new) orqali qanday muammoni hal qilmoqchi ekaningizni va yangi imkoniyat qanday ishlashi kerakligini tushuntiring. Haqiqiy tarmoq qurilmalari bilan ishlash tajribasiga asoslangan takliflar ayniqsa foydali.
+[GitHub Issues](https://github.com/karen101996/ravlan-releases/issues/new) orqali qanday muammoni hal qilmoqchi ekaningizni va yangi imkoniyat qanday ishlashi kerakligini tushuntiring. Haqiqiy tarmoq qurilmalari bilan ishlash tajribasiga asoslangan takliflar ayniqsa foydali.
 
 ### Loyihani rivojlantirish
 
