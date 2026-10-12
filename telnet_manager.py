@@ -5,10 +5,8 @@ import json
 import msvcrt
 import re
 import sys
-import base64
-import subprocess
-import shutil
 import time
+import urllib.request
 from pathlib import Path
 
 import telnetlib3
@@ -154,38 +152,26 @@ async def interactive(reader, writer):
 
 
 def check_updates():
-    """Best-effort, non-blocking-for-failure version notice (cached for 24h)."""
+    """Best-effort public version notice, cached for 24 hours."""
     root = Path.home() / "AppData" / "Local" / "NetPilot"
     manifest = root / "version.json"
     cache = root / "update-check.json"
     try:
         local = json.loads(manifest.read_text(encoding="utf-8"))["version"]
-        cached = {}
-        if cache.exists():
-            cached = json.loads(cache.read_text(encoding="utf-8"))
+        cached = json.loads(cache.read_text(encoding="utf-8")) if cache.exists() else {}
         if time.time() - cached.get("checked_at", 0) > 86400:
-            gh = shutil.which("gh")
-            if not gh:
-                return
-            result = subprocess.run(
-                [gh, "api", "repos/karen101996/netpilot/contents/version.json",
-                 "--jq", ".content"],
-                capture_output=True, text=True, timeout=5,
-                creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
-            )
-            if result.returncode != 0:
-                return
-            payload = base64.b64decode("".join(result.stdout.split()))
-            remote = json.loads(payload.decode("utf-8"))["version"]
+            url = "https://raw.githubusercontent.com/karen101996/netpilot-releases/main/version.json"
+            with urllib.request.urlopen(url, timeout=3) as response:
+                remote = json.loads(response.read(65536).decode("utf-8"))["version"]
             cached = {"checked_at": time.time(), "version": remote}
             cache.write_text(json.dumps(cached), encoding="utf-8")
         remote = cached.get("version", local)
         def parts(value):
             return tuple(int(x) for x in value.split("."))
         if parts(remote) > parts(local):
-            print(f"\n[UPDATE] NetPilot v{remote} available (installed: v{local})")
-            print("Run: np update\n")
-    except (OSError, ValueError, KeyError, subprocess.TimeoutExpired):
+            print(f"\\n[UPDATE] NetPilot v{remote} available (installed: v{local})")
+            print("Run: np update\\n")
+    except (OSError, ValueError, KeyError, TimeoutError):
         pass
 
 
