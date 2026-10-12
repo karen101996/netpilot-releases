@@ -1,3 +1,9 @@
+## v1.5.0 — RAVLAN rebrand
+
+- Renamed the product to **RAVLAN** and introduced the `rv` management command.
+- Kept the legacy `np` command, installation location, and encrypted credentials compatible.
+- Updated release repository links and documentation.
+
 # Changelog
 
 ## [1.4.4] — 2026-10-12
@@ -14,8 +20,8 @@
 ## [1.4.0] — 2026-10-12
 - SSH connections using `s IP` and `s ALIAS`.
 - Win+R shortcuts for saved devices, with Telnet/SSH protocol selection.
-- Colorful `np help` in Russian, English, and Uzbek.
-- Persistent `np language ru|en|uz` and `np version`.
+- Colorful `rv help` in Russian, English, and Uzbek.
+- Persistent `rv language ru|en|uz` and `rv version`.
 - Signed Python installer fallback when winget is unavailable.
 - Existing credentials remain unchanged.
 
@@ -23,11 +29,11 @@
 - Added a local device address book with `t add NAME IP`, `t list` and `t search QUERY`.
 - Connect to saved devices by alias using `t NAME`.
 - Kept existing `t IP` connections and Windows DPAPI credential storage compatible.
-- Added release notes display after successful `np update` (starting with updates performed by the v1.3.0 updater).
+- Added release notes display after successful `rv update` (starting with updates performed by the v1.3.0 updater).
 - Fixed newline rendering in update notifications.
 - Added Windows CI regression tests for address book operations.
 
-All notable NetPilot changes are documented here. Versions below summarize the observed development milestones; release notes are not a substitute for automated test results.
+All notable RAVLAN changes are documented here. Versions below summarize the observed development milestones; release notes are not a substitute for automated test results.
 
 ## [1.2.5] — 2026-10-12
 - Added cache-busting to the public version check performed before Telnet connections.
@@ -39,7 +45,7 @@ All notable NetPilot changes are documented here. Versions below summarize the o
 - Verified the update flow from v1.2.3 to v1.2.4 on Windows.
 
 ## [1.2.3] — 2026-10-12
-- Verified downloading, checksum checking and installing updates with `np update`.
+- Verified downloading, checksum checking and installing updates with `rv update`.
 
 ## [1.2.2] — 2026-10-12
 - Switched update checks and downloads from raw GitHub URLs to the public GitHub Contents API.
@@ -49,7 +55,7 @@ All notable NetPilot changes are documented here. Versions below summarize the o
 
 ## [1.2.0] — 2026-10-12
 - Added unauthenticated public update distribution.
-- Added `np update` and version notifications on connection.
+- Added `rv update` and version notifications on connection.
 - Preserved locally stored credentials across upgrades.
 
 ## Next
