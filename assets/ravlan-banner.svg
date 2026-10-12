@@ -1,11 +1,48 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="340" viewBox="0 0 1200 340" role="img" aria-labelledby="title desc">
-<title id="title">RAVLAN — Fast SSH &amp; Telnet access for Windows</title><desc id="desc">RAVLAN branded dark banner showing a raven-inspired network emblem, one-command SSH and Telnet access and a terminal prompt.</desc>
-<defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#081528"/><stop offset="1" stop-color="#101d36"/></linearGradient><linearGradient id="accent" x2="1" y2="1"><stop stop-color="#46d4ff"/><stop offset="1" stop-color="#2572ff"/></linearGradient><filter id="glow"><feGaussianBlur stdDeviation="16"/></filter></defs>
-<rect width="1200" height="340" rx="24" fill="url(#bg)"/><circle cx="1100" cy="-80" r="230" fill="#146bd5" opacity=".11"/><circle cx="15" cy="340" r="230" fill="#00b8ff" opacity=".07"/>
-<g transform="translate(55 63)"><rect width="190" height="190" rx="35" fill="#0a213f" stroke="#298fe7" stroke-width="2"/><path d="M46 141V49L142 141V49" fill="none" stroke="url(#accent)" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/><g fill="#5fe0ff" stroke="#09213b" stroke-width="4"><circle cx="46" cy="141" r="8"/><circle cx="142" cy="49" r="8"/><circle cx="142" cy="141" r="8"/></g></g>
-<text x="282" y="130" fill="#f7fbff" font-size="68" font-weight="800" font-family="Segoe UI,Arial,sans-serif">Net<tspan fill="#3da9ff">Pilot</tspan></text>
-<text x="286" y="175" fill="#c2d4e8" font-size="25" font-family="Segoe UI,Arial,sans-serif">Fast SSH &amp; Telnet access for Windows</text>
-<text x="286" y="217" fill="#91aaca" font-size="18" font-family="Segoe UI,Arial,sans-serif">SSH + Telnet  ·  Encrypted passwords  ·  Win + R shortcuts</text>
-<g transform="translate(770 78)"><rect width="374" height="181" rx="15" fill="#070e1b" stroke="#294461"/><rect width="374" height="34" rx="15" fill="#16263b"/><rect y="20" width="374" height="14" fill="#16263b"/><circle cx="22" cy="17" r="5" fill="#ff6977"/><circle cx="41" cy="17" r="5" fill="#ffcf5c"/><circle cx="60" cy="17" r="5" fill="#50d69a"/><text x="20" y="70" font-size="19" fill="#c6e5ff" font-family="Consolas,monospace">&gt; s home</text><text x="20" y="105" font-size="16" fill="#58c8ff" font-family="Consolas,monospace">SSH connected securely</text><text x="20" y="137" font-size="16" fill="#66d9a4" font-family="Consolas,monospace">admin@router &gt; _</text></g>
-<text x="56" y="307" fill="#6f9ecb" font-size="16" font-family="Segoe UI,Arial,sans-serif">RAVLAN  /  WINDOWS 10 &amp; 11  /  SSH + TELNET CLI</text>
+<title id="title">RAVLAN — Network access, simplified</title>
+<desc id="desc">Premium dark RAVLAN banner with a geometric raven symbol, electric cyan network connections, and SSH Telnet terminal.</desc>
+<defs>
+ <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#080D17"/><stop offset=".55" stop-color="#0C1728"/><stop offset="1" stop-color="#111B2D"/></linearGradient>
+ <linearGradient id="cyan" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#79F4F1"/><stop offset=".52" stop-color="#26BFD5"/><stop offset="1" stop-color="#4A81F2"/></linearGradient>
+ <linearGradient id="wing" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#1C3B5A"/><stop offset="1" stop-color="#0B1D34"/></linearGradient>
+ <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M32 0H0V32" fill="none" stroke="#2B5875" stroke-opacity=".16"/></pattern>
+ <filter id="blur"><feGaussianBlur stdDeviation="27"/></filter>
+</defs>
+<rect width="1200" height="340" rx="22" fill="url(#bg)"/>
+<rect width="1200" height="340" rx="22" fill="url(#grid)"/>
+<ellipse cx="215" cy="165" rx="190" ry="145" fill="#17BDD8" opacity=".08" filter="url(#blur)"/>
+<ellipse cx="1050" cy="40" rx="210" ry="100" fill="#3869D5" opacity=".09" filter="url(#blur)"/>
+<rect x="1" y="1" width="1198" height="338" rx="21" fill="none" stroke="#4E819A" stroke-opacity=".35" stroke-width="2"/>
+<!-- Raven / network monogram -->
+<g transform="translate(50 49)">
+ <rect width="238" height="238" rx="36" fill="#0A1626" stroke="#28516B" stroke-width="2"/>
+ <path d="M21 193L75 171 106 186 166 154 216 171" fill="none" stroke="#3BAFC6" stroke-opacity=".28" stroke-width="2"/>
+ <path d="M42 76L94 36 152 59 206 31" fill="none" stroke="#3BAFC6" stroke-opacity=".24" stroke-width="2"/>
+ <g stroke="#44C9D9" stroke-width="2" opacity=".58"><path d="M32 201H73L100 174"/><path d="M172 169L199 196H220"/><path d="M46 50L78 74"/></g>
+ <g fill="#56DCE5"><circle cx="32" cy="201" r="4"/><circle cx="220" cy="196" r="4"/><circle cx="46" cy="50" r="4"/></g>
+ <path d="M48 143L91 100 131 88 175 53 170 96 211 114 170 127 160 176 133 148 94 181 101 137Z" fill="url(#wing)" stroke="url(#cyan)" stroke-width="3" stroke-linejoin="round"/>
+ <path d="M91 100L132 119 175 53 170 96 211 114 157 113 133 148 101 137Z" fill="#142D46"/>
+ <path d="M91 100L132 119 175 53M132 119L133 148 94 181M132 119L170 127" fill="none" stroke="#54DDE3" stroke-opacity=".9" stroke-width="2.5"/>
+ <path d="M175 53L191 66 174 77Z" fill="#6AE5EB"/>
+ <circle cx="169" cy="89" r="4" fill="#9AF9F2"/>
+ <path d="M160 176L133 148 94 181" fill="none" stroke="#4B86C8" stroke-width="3"/>
+ <circle cx="94" cy="181" r="5" fill="#54DDE3"/><circle cx="211" cy="114" r="5" fill="#54DDE3"/>
+</g>
+<!-- Brand typography -->
+<text x="324" y="139" font-size="81" font-weight="800" letter-spacing="5" fill="#F4F9FD" font-family="Segoe UI,Arial,sans-serif">RAV<tspan fill="#58D6DF">LAN</tspan></text>
+<rect x="328" y="160" width="52" height="4" rx="2" fill="#58D6DF"/>
+<text x="328" y="199" font-size="24" fill="#C8DAE8" font-family="Segoe UI,Arial,sans-serif">Network access, simplified.</text>
+<text x="328" y="234" font-size="17" fill="#89A8BF" font-family="Segoe UI,Arial,sans-serif">SSH  /  TELNET  /  ENCRYPTED CREDENTIALS  /  WINDOWS</text>
+<text x="328" y="287" font-size="17" fill="#56D7DE" font-family="Consolas,monospace">rv help<tspan fill="#57778D">   •   </tspan>rv update<tspan fill="#57778D">   •   </tspan>s home<tspan fill="#57778D">   •   </tspan>t olt</text>
+<!-- Terminal widget -->
+<g transform="translate(884 68)">
+ <rect width="268" height="206" rx="14" fill="#08111F" stroke="#35526A" stroke-width="1.5"/>
+ <path d="M14 0H254Q268 0 268 14V37H0V14Q0 0 14 0Z" fill="#182B3D"/>
+ <circle cx="20" cy="18" r="4.5" fill="#F17C81"/><circle cx="37" cy="18" r="4.5" fill="#F2C76B"/><circle cx="54" cy="18" r="4.5" fill="#61D5B0"/>
+ <text x="78" y="23" font-size="12" fill="#9AB5C8" font-family="Consolas,monospace">ravlan / terminal</text>
+ <text x="17" y="72" font-size="17" fill="#78E6E7" font-family="Consolas,monospace">&gt; s home</text>
+ <text x="17" y="105" font-size="14" fill="#7F9BAE" font-family="Consolas,monospace">Connecting via SSH...</text>
+ <text x="17" y="136" font-size="14" fill="#73E6B9" font-family="Consolas,monospace">✓ Connected</text>
+ <text x="17" y="174" font-size="15" fill="#CFE7F3" font-family="Consolas,monospace">admin@router &gt; <tspan fill="#5ADCE2">_</tspan></text>
+</g>
 </svg>
