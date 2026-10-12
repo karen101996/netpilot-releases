@@ -1,10 +1,10 @@
 $ErrorActionPreference = 'Stop'
-$releaseRepo = 'karen101996/netpilot-releases'
+$releaseRepo = 'karen101996/ravlan-releases'
 $apiBase = "https://api.github.com/repos/$releaseRepo/contents"
 $root = Join-Path $env:LOCALAPPDATA 'NetPilot'
 $staging = Join-Path ([IO.Path]::GetTempPath()) ('netpilot-' + [guid]::NewGuid().ToString('N'))
 function Download-ReleaseFile([string]$file, [string]$path) {
-  $headers = @{ 'User-Agent' = 'NetPilot-Updater'; 'Accept' = 'application/vnd.github+json' }
+  $headers = @{ 'User-Agent' = 'RAVLAN-Updater'; 'Accept' = 'application/vnd.github+json' }
   $response = Invoke-RestMethod -Uri ("$apiBase/$file" + "?ref=main&nocache=" + [DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()) -Headers $headers -TimeoutSec 30
   if (-not $response.content -or $response.encoding -ne 'base64') {
     throw "GitHub API did not return base64 content for $file"
@@ -35,7 +35,7 @@ try {
   if (Test-Path $localVersion) {
     $installedVersion = (Get-Content $localVersion -Raw | ConvertFrom-Json).version
   }
-  Write-Host "NetPilot installed: $installedVersion | latest: $($manifest.version)"
+  Write-Host "RAVLAN installed: $installedVersion | latest: $($manifest.version)"
   if ([version]$installedVersion -ge [version]$manifest.version) {
     Write-Host 'Already up to date.' -ForegroundColor Green
     exit 0
@@ -51,7 +51,7 @@ try {
   & powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $staging 'install.ps1')
   if ($LASTEXITCODE -ne 0) { throw 'Installer failed; check output.' }
   Write-Host ""
-  Write-Host "NetPilot updated successfully!" -ForegroundColor Green
+  Write-Host "RAVLAN updated successfully!" -ForegroundColor Green
   Write-Host "Version: $installedVersion -> $($manifest.version)"
   $changes = @($manifest.changes | Where-Object { $_ -is [string] -and $_.Trim() })
   if ($changes.Count -gt 0) {
