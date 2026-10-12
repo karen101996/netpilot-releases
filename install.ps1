@@ -3,7 +3,7 @@ $root = Join-Path $env:LOCALAPPDATA 'NetPilot'
 $bin = Join-Path $env:USERPROFILE 'bin'
 $legacy = Join-Path $env:WINDIR 't.bat'
 $backupDir = Join-Path $root 'backups'
-Write-Host 'NetPilot installer: command t' -ForegroundColor Cyan
+Write-Host 'RAVLAN installer: command t' -ForegroundColor Cyan
 
 # Find a working Python; on a clean Windows PC download the official installer.
 $python = $null
@@ -75,7 +75,7 @@ if ($LASTEXITCODE -ne 0) { throw 'Dependency installation failed; existing insta
 & $venvPython -m py_compile (Join-Path $PSScriptRoot 'telnet_manager.py') (Join-Path $PSScriptRoot 'ssh_password.py')
 if ($LASTEXITCODE -ne 0) { throw 'Python syntax check failed; existing installation was not switched.' }
 
-# Back up existing legacy script and current NetPilot script before replacing either.
+# Back up existing legacy script and current RAVLAN script before replacing either.
 $stamp = Get-Date -Format 'yyyyMMdd-HHmmss'
 $current = Join-Path $root 'telnet_manager.py'
 if (Test-Path $current) {
@@ -111,7 +111,7 @@ $npLines = @(
   'exit /b %errorlevel%'
 )
 $npCmd = ($npLines -join "`r`n") + "`r`n"
-Set-Content -Path (Join-Path $bin 'np.cmd') -Value $npCmd -Encoding ASCII
+Set-Content -Path (Join-Path $bin 'rv.cmd') -Value $npCmd -Encoding ASCII`nSet-Content -Path (Join-Path $bin 'np.cmd') -Value $npCmd -Encoding ASCII
 
 # A t.bat in the user profile takes precedence when CMD starts there.
 # Preserve it, then forward it to the newly installed launcher.
@@ -156,13 +156,13 @@ if ($parts -notcontains $bin) {
 # Check the installed script and report actual resolution separately.
 & $venvPython -m py_compile $current
 if ($LASTEXITCODE -ne 0) { throw 'Installed script failed verification.' }
-Write-Host 'NetPilot installed. Credentials remain in %USERPROFILE%\TelnetManager\credentials.json.' -ForegroundColor Green
-Write-Host 'Open a NEW CMD and run: np help'
+Write-Host 'RAVLAN installed. Credentials remain in %USERPROFILE%\TelnetManager\credentials.json.' -ForegroundColor Green
+Write-Host 'Open a NEW CMD and run: rv help'
 Write-Host 'Then connect using: t 10.137.1.19'
 if (Test-Path $userLegacy) {
   $checkUser = Get-Content $userLegacy -Raw
   if ($checkUser -notmatch 'call\s+"%USERPROFILE%\\bin\\t\.cmd"') {
-    Write-Warning 'User-profile t.bat may override NetPilot.'
+    Write-Warning 'User-profile t.bat may override RAVLAN.'
   }
 }
 if (Test-Path $legacy) {
