@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.0] — 2026-10-12
+- Added a local device address book with `t add NAME IP`, `t list` and `t search QUERY`.
+- Connect to saved devices by alias using `t NAME`.
+- Kept existing `t IP` connections and Windows DPAPI credential storage compatible.
+- Added release notes display after successful `np update` (starting with updates performed by the v1.3.0 updater).
+- Fixed newline rendering in update notifications.
+- Added Windows CI regression tests for address book operations.
+
 All notable NetPilot changes are documented here. Versions below summarize the observed development milestones; release notes are not a substitute for automated test results.
 
 ## [1.2.5] — 2026-10-12
