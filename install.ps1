@@ -102,8 +102,8 @@ Set-Content -Path (Join-Path $bin 's.cmd') -Value $sshCmd -Encoding ASCII
 if ($LASTEXITCODE -ne 0) { Write-Warning 'Some existing device launchers could not be synchronized.' }
 $npCmd = '@echo off' + "`r`n" +
   'if /I "%~1"=="update" goto update' + "`r`n" +
-  'echo NetPilot: use np update to update. Telnet: t IP' + "`r`n" +
-  'exit /b 1' + "`r`n" +
+  '"%LOCALAPPDATA%\NetPilot\.venv\Scripts\python.exe" "%LOCALAPPDATA%\NetPilot\telnet_manager.py" --np %*' + "`r`n" +
+  'exit /b %errorlevel%' + "`r`n" +
   ':update' + "`r`n" +
   'powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%LOCALAPPDATA%\NetPilot\update.ps1"' + "`r`n"
 Set-Content -Path (Join-Path $bin 'np.cmd') -Value $npCmd -Encoding ASCII
@@ -152,7 +152,7 @@ if ($parts -notcontains $bin) {
 & $venvPython -m py_compile $current
 if ($LASTEXITCODE -ne 0) { throw 'Installed script failed verification.' }
 Write-Host 'NetPilot installed. Credentials remain in %USERPROFILE%\TelnetManager\credentials.json.' -ForegroundColor Green
-Write-Host 'Open a NEW CMD and run: where t'
+Write-Host 'Open a NEW CMD and run: np help'
 Write-Host 'Then connect using: t 10.137.1.19'
 if (Test-Path $userLegacy) {
   $checkUser = Get-Content $userLegacy -Raw
