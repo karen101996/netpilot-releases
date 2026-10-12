@@ -1,10 +1,10 @@
 {
-  "version": "1.2.3",
+  "version": "1.2.4",
   "channel": "stable",
   "files": {
     "install.ps1": "b624660f13d7d8af6305d8ee8b4c445be4c9ce1d",
     "telnet_manager.py": "53ba039d7d1881a1b7ee91da8ecdd82386c73c20",
     "requirements.txt": "8f79282c550c6e40adc8b7b8becf93fd9e642277",
-    "update.ps1": "760c5228986674564955a4e13c221ef5215b8c6b"
+    "update.ps1": "3243ca849cf9238d75c1461ab34d8ec273599925"
   }
 }
