@@ -1,49 +1,37 @@
 # NetPilot Roadmap
 
-NetPilot development is organized into small, verifiable stages. **Planned does not mean implemented.**
+NetPilot is a Windows CLI for SSH and Telnet device access. This roadmap separates **shipped features** from ideas under consideration.
 
-## Stage 1 — Public project presentation
-- [x] Professional bilingual README
-- [x] Changelog, security policy and roadmap
-- [ ] Original logo and header artwork
-- [ ] Sanitized terminal screenshots / GIF demo
-- [ ] Official GitHub Release with downloadable installer archive
-- [ ] Installation and update smoke tests on a clean Windows system
+## Shipped — v1.4.4
 
-## Stage 2 — Device address book
-- [ ] `t list`: list saved devices (without exposing secrets)
-- [ ] `t add <alias> <ip>`: save a friendly device name
-- [ ] `t <alias>`: connect using a saved name
-- [ ] `t search <query>`: search by alias or IP
-- [ ] Migration tests preserving existing DPAPI credentials
-- [ ] Explicit error handling for duplicate aliases and invalid IP addresses
+- [x] SSH and Telnet interactive connections
+- [x] Save device aliases and connect by name
+- [x] Windows Run (`Win + R`) shortcuts
+- [x] Encrypt SSH and Telnet passwords locally with Windows DPAPI
+- [x] Reuse saved credentials automatically
+- [x] Reset saved SSH and Telnet credentials
+- [x] SSH host-key verification
+- [x] Configure SSH usernames per device
+- [x] Russian, English and Uzbek command help
+- [x] Versioned public releases and verified update manifests
+- [x] Automated Python checks and regression tests
 
-## Stage 3 — Diagnostics and convenience
-- [ ] `t ping <ip-or-alias>`
-- [ ] Local connection history with privacy-conscious retention
-- [ ] `np doctor`: diagnose installation, PATH, Python and update access
+## Planned / under consideration
 
-## Stage 4 — Configuration backups
-- [ ] `t backup <ip-or-alias>`
-- [ ] Vendor-specific, read-only configuration retrieval adapters
-- [ ] Clear output directory and backup timestamps
-- [ ] Tests to ensure no commands modify device configuration
+- [ ] Installation diagnostics (`np doctor`)
+- [ ] Network reachability diagnostics
+- [ ] Optional local connection history
+- [ ] Read-only device configuration backups
+- [ ] Installer and updater integration tests on clean Windows systems
+- [ ] Digitally signed release artifacts and signature verification
+- [ ] Documented uninstall and rollback workflows
+- [ ] More device-specific terminal compatibility testing
 
-## Stage 5 — SSH
-- [ ] SSH connection support and protocol selection
-- [ ] Host-key verification and trust-on-first-use workflow
-- [ ] Secure authentication and compatibility testing
+## Compatibility commitments
 
-## Stage 6 — Release quality and security
-- [ ] CI tests for parsing, device profiles, migrations and updates
-- [ ] Installer / updater integration tests
-- [ ] Signed releases and signature verification
-- [ ] Versioned immutable release artifacts and reproducible packaging
-- [ ] User-friendly uninstaller and rollback documentation
+- Keep `t IP`, `s IP` and saved device aliases working.
+- Preserve existing DPAPI-protected credentials during normal updates.
+- Never upload device credentials to the release repository.
+- Do not silently change network device configurations.
 
-## Compatibility promises
-- Keep `t IP` working.
-- Keep `np update` working.
-- Do not delete or publish local credentials.
-- Do not silently change device configurations.
-- Prefer opt-in new features and explicit migration steps.
+See the [README](README.md) for commands and [CHANGELOG](CHANGELOG.md) for released changes.
