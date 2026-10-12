@@ -1,221 +1,247 @@
 <div align="center">
 
-<img src="assets/netpilot-banner.svg" alt="NetPilot — Fast Telnet access for Windows" width="100%" />
+<img src="assets/netpilot-banner.svg" alt="NetPilot — Telnet & SSH access for Windows" width="100%" />
 
 # NetPilot
 
-### Fast Telnet access for Windows network administrators
+### Fast, secure-by-default device access for Windows
 
-**Connect to network devices in one command. Save time on repetitive logins. Keep credentials on your PC.**
+**One command. Your devices. Your terminal.**
 
-[![Windows](https://img.shields.io/badge/Windows-10%20%2F%2011-0078D4?logo=windows&logoColor=white)](https://github.com/karen101996/netpilot-releases)
-[![Latest version](https://img.shields.io/badge/version-1.3.0-2563eb)](version.json)
-[![Update channel](https://img.shields.io/badge/updates-GitHub%20API-24292f?logo=github)](https://github.com/karen101996/netpilot-releases)
-[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+A lightweight Windows CLI for network administrators. Connect over **SSH or Telnet**, save device aliases, and launch sessions directly from **Win + R** — without repeatedly entering credentials.
 
-[**Download ZIP**](https://github.com/karen101996/netpilot-releases/archive/refs/heads/main.zip) · [**Quick start**](#quick-start) · [**Commands**](#commands) · [**Roadmap**](ROADMAP.md) · [**Русский**](#на-русском)
+[![Latest release](https://img.shields.io/github/v/release/karen101996/netpilot-releases?display_name=tag&label=latest%20release&color=2563eb)](https://github.com/karen101996/netpilot-releases/releases/latest)
+[![Windows](https://img.shields.io/badge/Windows-10%20%2F%2011-0078D4?logo=windows&logoColor=white)](#requirements)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](#requirements)
+[![Release workflow](https://github.com/karen101996/netpilot-releases/actions/workflows/publish-release.yml/badge.svg)](https://github.com/karen101996/netpilot-releases/actions/workflows/publish-release.yml)
+
+### [Download latest release](https://github.com/karen101996/netpilot-releases/releases/latest) · [Quick start](#quick-start) · [Command reference](#command-reference) · [Русский](#русский)
 
 </div>
 
 ---
 
-## What is NetPilot?
+## Why NetPilot?
 
-**NetPilot** is a lightweight Windows command-line utility for connecting to switches, OLTs and other Telnet-enabled network devices. Instead of opening a separate client and repeatedly entering credentials, connect directly from **CMD** or **Windows Terminal**:
+Managing routers, switches, OLTs and other network devices often means remembering IP addresses, opening terminal sessions, and typing the same passwords again. NetPilot makes the everyday workflow shorter.
 
-```bat
-t 192.168.1.10
+```text
+Win + R  →  home  →  SSH session
+Win + R  →  olt   →  Telnet session
+
+CMD> s home
+CMD> t olt
+CMD> np help
 ```
 
-On the first connection, NetPilot asks for the username and password and can remember them **locally, encrypted with Windows DPAPI**. On subsequent connections, it reuses the saved credentials for that IP address.
+### Features
 
-### Highlights
+| | Capability | Details |
+|:--:|---|---|
+| 🔐 | **SSH & Telnet** | Interactive CLI sessions with simple `s` and `t` commands |
+| 🗝️ | **Encrypted credentials** | Saved passwords protected locally using Windows DPAPI |
+| ⚡ | **Win + R shortcuts** | Open a saved device directly by its alias |
+| 📒 | **Device address book** | Add, list and search devices by name or IP |
+| 👤 | **SSH login management** | Default username `admin`; customize or edit per device |
+| 🔄 | **Password reset** | Replace saved SSH or Telnet passwords with `--reset` |
+| 🌐 | **Three languages** | Russian, English and Uzbek help interface |
+| 📦 | **Easy updates** | Run `np update` to install a verified public release |
 
-| Feature | What it does |
-| :--- | :--- |
-| **One-command access** | Connect using `t IP`, without opening a separate Telnet application |
-| **Per-device credentials** | Remember a different username and password for each IP address |
-| **Windows DPAPI encryption** | Encrypt saved passwords for the current Windows user |
-| **Enable mode support** | Optionally authenticate to privileged mode on supported devices |
-| **Interactive terminal** | Work with the device CLI directly in the console |
-| **Simple updates** | Install newer versions with `np update` |
-| **Update notifications** | Check for a newer release when connecting, at most once every 24 hours |
-| **No GitHub login required** | Install and update from this public repository |
-
-> [!NOTE]
-> NetPilot is a **Telnet** client, not an SSH client. Device login prompts and CLI behavior vary between vendors; compatibility with every model is not guaranteed.
-
-## Official releases
-
-Versioned installer ZIP archives can be published from the [Publish NetPilot Release workflow](https://github.com/karen101996/netpilot-releases/actions/workflows/publish-release.yml). The workflow validates all distributed files against the version manifest and generates a SHA-256 checksum for the ZIP before creating a GitHub Release. See [Releases](https://github.com/karen101996/netpilot-releases/releases) for published artifacts. Until the first GitHub Release is published, use the ZIP download linked above.
+> [!IMPORTANT]
+> **SSH and Telnet are different protocols.** SSH encrypts network traffic and verifies server host keys. Telnet does **not** encrypt traffic: use it only on trusted management networks.
 
 ## Quick start
 
 ### Requirements
 
 - **Windows 10 or Windows 11**
-- Network access to the device's **Telnet port (usually TCP 23)**
-- Internet access during initial installation to download Python/dependencies, if they are not already available
-- Python **3.10+** (the installer looks for a supported Python installation and can install Python 3.13 using `winget`)
+- Internet access for initial setup and updates
+- Network access to your equipment (typically SSH TCP **22** or Telnet TCP **23**)
+- Python **3.10+**; the installer can set up a compatible Python version when needed
 
-### Install
+### Installation
 
-1. **[Download NetPilot as ZIP](https://github.com/karen101996/netpilot-releases/archive/refs/heads/main.zip)**.
-2. Extract the ZIP to any folder.
-3. Double-click **`INSTALL.bat`** and follow the installer output.
-4. Open a **new CMD / Windows Terminal** window.
-5. Connect to your device:
+1. Open **[Latest release](https://github.com/karen101996/netpilot-releases/releases/latest)** and download the `NetPilot-*-Windows.zip` archive under **Assets**.
+2. Extract the archive into a folder.
+3. Run **`INSTALL.bat`**.
+4. Open a **new** CMD or Windows Terminal window.
+5. Check installation and connect:
 
-   ```bat
-   t 192.168.1.10
-   ```
-
-The installer creates a local Python environment under `%LOCALAPPDATA%\NetPilot`, adds a command launcher under `%USERPROFILE%\bin`, and updates your user `PATH` if necessary. **Administrator privileges are not normally required**, though Python installation and certain legacy launchers may require additional permissions.
-
-### First connection
-
-```text
-C:\> t 192.168.1.10
-
-First connection: 192.168.1.10
-Login: admin
-Password:
-Use enable? [y/N]: n
-
-Connecting to 192.168.1.10:23...
-...
---- Interactive console ---
+```bat
+np version
+np help
+s 192.168.88.1
 ```
 
-After a successful login, credentials can be saved for that IP address. Later connections can reuse them.
+NetPilot installs under `%LOCALAPPDATA%\NetPilot` and adds launchers to `%USERPROFILE%\bin`. Administrator rights are not normally required. Initial setup may install Python and Python dependencies.
 
-## Commands
+### Your first saved device
 
-| Command | Description |
-| :--- | :--- |
-| `t 192.168.1.10` | Connect to a device on port 23 |
-| `t 192.168.1.10 2323` | Connect using a custom Telnet port |
-| `t 192.168.1.10 --reset` | Remove the saved credentials for this IP and enter them again |
-| `np update` | Check for and install the latest version |
-| `t add office 192.168.1.10` | Save a device alias (v1.3.0+) |
-| `t list` | Show saved device aliases (v1.3.0+) |
-| `t search office` | Find devices by alias or IP (v1.3.0+) |
-| `t office` | Connect to a saved alias (v1.3.0+) |
-
-### Device address book (v1.3.0+)
-
-Add a device alias with `t add office 192.168.1.10`, view saved aliases using `t list`, search with `t search office`, and connect using `t office`. Aliases are stored separately from encrypted per-IP credentials. Existing `t IP` usage is unchanged.
-
-### Updates
-
-When you start a Telnet connection, NetPilot checks for a new version **no more than once every 24 hours**. If an update is available, it prints a notice and continues connecting normally.
-
-```text
-[UPDATE] NetPilot v1.2.5 available (installed: v1.2.4)
-Run: np update
-
-Connecting to 192.168.1.10:23...
+```bat
+s add home 192.168.88.1
+s home
 ```
 
-To update manually:
+The SSH username defaults to **`admin`**. On first login, enter the SSH password. After successful authentication, NetPilot saves it encrypted for future connections. When an SSH server is new, confirm its host-key fingerprint **only after verifying it belongs to your device**.
+
+To use a different username:
+
+```bat
+s add router 192.168.88.2 operator
+s edit router admin
+```
+
+To create a Telnet shortcut:
+
+```bat
+t add olt 192.168.1.10
+t olt
+```
+
+You can also press **Win + R**, enter `home`, `router` or `olt`, and connect using the saved device protocol.
+
+## Command reference
+
+| Command | Purpose |
+|---|---|
+| `s IP` | SSH connection (port 22, username `admin` by default) |
+| `s IP 2222 --user LOGIN` | SSH with custom port and username |
+| `t IP` | Telnet connection (port 23) |
+| `t IP 2323` | Telnet with a custom port |
+| `s add NAME IP [LOGIN]` | Save an SSH device; login defaults to `admin` |
+| `t add NAME IP` | Save a Telnet device |
+| `s edit NAME LOGIN` | Change the username of a saved SSH device |
+| `s NAME` / `t NAME` | Connect using a saved alias |
+| `s list` / `t list` | List saved devices |
+| `s search QUERY` / `t search QUERY` | Search by alias or IP |
+| `s NAME --reset` | Clear the saved SSH password and enter a new one |
+| `t NAME --reset` | Reset saved Telnet credentials |
+| `np help` | Show interactive, localized command help |
+| `np language ru\|en\|uz` | Change help language |
+| `np version` | Display installed version |
+| `np update` | Check for and install updates |
+
+### Everyday examples
+
+```bat
+s add mikrotik 192.168.88.1 admin
+s mikrotik
+s mikrotik --reset
+
+t add switch 192.168.1.20
+t switch
+
+np language ru
+np help
+np update
+```
+
+## Security & privacy
+
+NetPilot keeps saved settings **on your Windows PC**.
+
+- **SSH passwords:** `%USERPROFILE%\TelnetManager\ssh_passwords.json`
+- **Telnet credentials:** `%USERPROFILE%\TelnetManager\credentials.json`
+- **Device aliases:** `%USERPROFILE%\TelnetManager\devices.json`
+- **SSH usernames:** `%USERPROFILE%\TelnetManager\ssh_users.json`
+- **SSH known hosts:** `%USERPROFILE%\TelnetManager\ssh_known_hosts`
+- **Encryption:** Windows DPAPI protects stored passwords for the Windows user context.
+- **SSH host-key checks:** Unknown host keys require confirmation; changed trusted host keys are not silently accepted.
+- **No credential cloud sync:** Device passwords are not uploaded to GitHub.
+- **Release integrity:** The updater validates downloaded files against Git blob SHA-1 values in [`version.json`](version.json). This is an integrity check, **not** a signed release or a guarantee against repository compromise.
+
+> [!WARNING]
+> DPAPI protects passwords **at rest**, not from programs already running with access to your Windows user account. Telnet traffic remains unencrypted, including authentication. Prefer SSH whenever your equipment supports it.
+
+## Updates and releases
+
+Run:
 
 ```bat
 np update
 ```
 
-The updater uses the **public GitHub API**, so end users do **not** need GitHub CLI, an account, or an access token. Downloaded files are checked against the Git blob hashes listed in [`version.json`](version.json) before installation. Existing saved credentials are kept.
+NetPilot checks for updates periodically and can install a newer release on request. Existing device aliases and saved credentials are preserved by normal updates.
 
-> [!IMPORTANT]
-> Hash comparison checks file integrity against the published manifest; it is **not a cryptographic release signature**. Review scripts before executing them if required by your organization's security policy.
-
-## Security & privacy
-
-- **Local credential storage:** `%USERPROFILE%\TelnetManager\credentials.json`
-- **Encryption:** Windows DPAPI; encrypted secrets are bound to the relevant Windows user context.
-- **No credential sync:** NetPilot does not upload stored usernames or passwords to GitHub.
-- **Update requests:** GitHub receives standard network requests when NetPilot checks for or downloads updates.
-- **Transport security:** **Telnet is unencrypted.** DPAPI protects passwords *at rest*, **not** while they travel over Telnet. Use NetPilot only on trusted, isolated management networks. Prefer SSH where supported.
-
-The distribution scripts in this repository are public and readable. The development repository is separate.
-
-## Project resources
-
-- [Roadmap](ROADMAP.md) — upcoming features and development stages
-- [Changelog](CHANGELOG.md) — release history
-- [Security policy](SECURITY.md) — security limitations and vulnerability reports
-- [Contributing](CONTRIBUTING.md) — bug reports and feature requests
+- **[Latest stable release](https://github.com/karen101996/netpilot-releases/releases/latest)**
+- [All releases](https://github.com/karen101996/netpilot-releases/releases)
+- [Changelog](CHANGELOG.md)
+- [Release manifest](version.json)
 
 ## Troubleshooting
 
 <details>
-<summary><strong>`t` or `np` is not recognized</strong></summary>
+<summary><strong>Windows says `s`, `t` or `np` is not recognized</strong></summary>
 
-Open a **new** CMD window after installation. Check:
-
-```bat
-where t
-where np
-```
-
-The installer places the launchers in `%USERPROFILE%\bin`. If an older `t.bat` appears first, check whether it forwards to `%USERPROFILE%\bin\t.cmd`.
+Open a new terminal after installation. Check `where s`, `where t` and `where np`. NetPilot places its command launchers in `%USERPROFILE%\bin`.
 
 </details>
 
 <details>
-<summary><strong>Connection fails or times out</strong></summary>
+<summary><strong>SSH asks for the password again</strong></summary>
 
-Check the IP address, network routing, firewall, and whether the device has Telnet enabled on the selected port. NetPilot does not enable Telnet on the device.
-
-</details>
-
-<details>
-<summary><strong>Need to change a saved password</strong></summary>
-
-Run `t DEVICE_IP --reset` to enter fresh credentials for that device.
+The password is saved only after a successful SSH authentication. Verify the username and target device. To replace a saved password, use `s NAME --reset`.
 
 </details>
 
 <details>
-<summary><strong>An update is available, but no notification appears</strong></summary>
+<summary><strong>SSH connection refused or timed out</strong></summary>
 
-Update checks are cached for up to 24 hours. You can always run `np update` to check manually.
+Confirm the IP address, network route, SSH service and port on the device. NetPilot cannot enable SSH remotely on equipment where it is disabled.
 
 </details>
+
+<details>
+<summary><strong>The SSH host-key fingerprint is unfamiliar</strong></summary>
+
+Verify the fingerprint through a trusted management channel before accepting it. Do not blindly approve unexpected key changes.
+
+</details>
+
+<details>
+<summary><strong>How do I change the language?</strong></summary>
+
+Run `np language ru`, `np language en` or `np language uz`. The setting persists across launches.
+
+</details>
+
+## Project
+
+[Roadmap](ROADMAP.md) · [Changelog](CHANGELOG.md) · [Security policy](SECURITY.md) · [Contributing](CONTRIBUTING.md) · [Report an issue](https://github.com/karen101996/netpilot-releases/issues)
 
 ---
 
-## На русском
+## Русский
 
-**NetPilot** — небольшая утилита для Windows, позволяющая подключаться к коммутаторам, OLT и другому сетевому оборудованию по Telnet прямо из CMD или Windows Terminal.
+**NetPilot** — утилита для быстрого подключения к сетевому оборудованию через **SSH и Telnet** в Windows 10/11.
 
-**Возможности:** команда `t IP`, сохранение логинов и паролей отдельно для каждого IP, локальное шифрование паролей через Windows DPAPI, поддержка `enable`, интерактивная консоль и обновления через `np update`.
+**Что умеет:** сохранять устройства под короткими именами, запускать подключение через **Win + R**, хранить пароли зашифрованными через Windows DPAPI, автоматически входить по SSH/Telnet, сбрасывать сохранённый пароль и обновляться одной командой.
 
-**Установка:**
-
-1. [Скачать ZIP](https://github.com/karen101996/netpilot-releases/archive/refs/heads/main.zip) и распаковать.
-2. Запустить **`INSTALL.bat`**.
-3. Открыть **новое** окно CMD.
-4. Ввести `t 192.168.1.10` и при первом подключении указать данные авторизации.
-
-**Основные команды:**
+**Установка:** скачай архив на странице [последнего релиза](https://github.com/karen101996/netpilot-releases/releases/latest), распакуй, запусти `INSTALL.bat`, затем открой новое окно CMD.
 
 ```bat
-t 192.168.1.10           REM Подключиться по Telnet
-t 192.168.1.10 2323      REM Подключиться к другому порту
-t 192.168.1.10 --reset   REM Сбросить сохранённые данные для IP
-np update                REM Проверить и установить обновление
+s add home 192.168.88.1
+s home
+s home --reset
+
+t add olt 192.168.1.10
+t olt
+
+np language ru
+np help
+np update
 ```
 
-При наличии новой версии NetPilot показывает уведомление **перед подключением**, но не прерывает работу с оборудованием. Обновление запускается только по команде пользователя.
+Для SSH логин по умолчанию — **admin**. При первом успешном подключении пароль сохраняется в зашифрованном виде. Чтобы поменять логин устройства, используй `s edit home LOGIN`. Для быстрого подключения нажми **Win + R** и введи сохранённое имя устройства.
 
-> **Безопасность:** пароли в файле на компьютере зашифрованы, но **сам протокол Telnet не шифрует трафик**. Используйте только в доверенных сетях управления. Для оборудования с SSH предпочтительнее SSH.
+**Важно:** SSH шифрует соединение; Telnet — нет. Используй Telnet только в доверенной сети управления.
 
 ---
 
 <div align="center">
 
-**Built for network administrators who prefer a fast, simple CLI.**
+**NetPilot — less typing, faster access.**
 
-[Download](https://github.com/karen101996/netpilot-releases/archive/refs/heads/main.zip) · [Report an issue](https://github.com/karen101996/netpilot-releases/issues) · [Version manifest](version.json)
+[Download latest release](https://github.com/karen101996/netpilot-releases/releases/latest) · [Report a bug](https://github.com/karen101996/netpilot-releases/issues) · [Release history](CHANGELOG.md)
 
 </div>
