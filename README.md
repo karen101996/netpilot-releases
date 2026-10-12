@@ -580,4 +580,4 @@ Odatdagi `rv update` yangilanishi qurilmalar ro‘yxati va shifrlangan parollarn
 </div>
 
 
-> **Migration from NetPilot:** Existing installations keep their legacy `%LOCALAPPDATA%\NetPilot` directory and `%USERPROFILE%\TelnetManager` data to preserve credentials and shortcuts. `np` remains available as a compatibility command; use `rv` for new instructions.
+> **Upgrade compatibility:** Existing installations retain their original application and `%USERPROFILE%\TelnetManager` data directories to preserve encrypted credentials and shortcuts. The previous `np` command remains available for compatibility; use `rv` for new instructions.
