@@ -15,6 +15,55 @@ import win32crypt
 
 BASE = Path.home() / "TelnetManager"
 STORE = BASE / "credentials.json"
+
+# Aliases are separate from encrypted per-IP credentials.
+ADDRESS_BOOK = BASE / "devices.json"
+RESERVED = {"add", "list", "search", "help", "ping", "backup", "history", "update", "doctor"}
+
+def load_devices():
+    if not ADDRESS_BOOK.exists():
+        return {}
+    data = json.loads(ADDRESS_BOOK.read_text(encoding="utf-8"))
+    if not isinstance(data, dict):
+        raise ValueError("Invalid device address book")
+    return data
+
+def add_device(alias, ip):
+    if not re.fullmatch(r"[A-Za-z][A-Za-z0-9_-]{0,39}", alias) or alias.lower() in RESERVED:
+        raise ValueError("Alias must start with a letter, use letters/digits/-/_, and not be a command")
+    ipaddress.ip_address(ip)
+    devices = load_devices()
+    key = alias.lower()
+    if key in devices:
+        raise ValueError(f"Alias '{key}' already exists for {devices[key]}; choose another name")
+    devices[key] = ip
+    BASE.mkdir(parents=True, exist_ok=True)
+    temp = ADDRESS_BOOK.with_suffix(".tmp")
+    temp.write_text(json.dumps(devices, indent=2), encoding="utf-8")
+    temp.replace(ADDRESS_BOOK)
+    print(f"Saved: {key} -> {ip}")
+
+def list_devices(query=None):
+    devices = load_devices()
+    matches = [(alias, ip) for alias, ip in sorted(devices.items())
+               if not query or query.lower() in alias.lower() or query.lower() in ip]
+    if not matches:
+        print("No matching devices." if query else "Address book is empty. Add one with: t add office 192.168.1.10")
+        return
+    print(f"{'ALIAS':<22} IP")
+    print("-" * 43)
+    for alias, ip in matches:
+        print(f"{alias:<22} {ip}")
+
+def resolve_device(target):
+    try:
+        return str(ipaddress.ip_address(target))
+    except ValueError:
+        devices = load_devices()
+        if target.lower() not in devices:
+            raise ValueError(f"Unknown device '{target}'. Use 't list' or 't add NAME IP'.")
+        return devices[target.lower()]
+
 PROMPTS = {
     "login": r"(?:login|username)\s*:\s*$",
     "password": r"(?:password|passwd)\s*:\s*$",
@@ -240,29 +289,46 @@ async def connect(ip, port=23, reset=False):
 
 
 def main():
-    if len(sys.argv) < 2:
-        print("Usage: t IP [PORT] [--reset]")
+    args = sys.argv[1:]
+    if not args or args[0].lower() in ("help", "--help", "-h"):
+        print("NetPilot: t IP [PORT] [--reset] | t ALIAS | t add NAME IP | t list | t search QUERY")
         return
-    ip = sys.argv[1]
+    command = args[0].lower()
     try:
-        ipaddress.ip_address(ip)
-    except ValueError:
-        print("Invalid IP address.")
-        return
-    reset = "--reset" in sys.argv
-    port = 23
-    for arg in sys.argv[2:]:
-        if arg.isdigit():
-            port = int(arg)
-    if not 1 <= port <= 65535:
-        print("Invalid port.")
-        return
-    try:
+        if command == "add":
+            if len(args) != 3:
+                raise ValueError("Usage: t add NAME IP")
+            add_device(args[1], args[2])
+            return
+        if command == "list":
+            if len(args) != 1:
+                raise ValueError("Usage: t list")
+            list_devices()
+            return
+        if command == "search":
+            if len(args) != 2:
+                raise ValueError("Usage: t search QUERY")
+            list_devices(args[1])
+            return
+        if command in RESERVED:
+            raise ValueError(f"Command '{command}' is not available yet")
+        ip = resolve_device(args[0])
+        reset = False
+        port = 23
+        for arg in args[1:]:
+            if arg == "--reset":
+                reset = True
+            elif arg.isdigit() and 1 <= int(arg) <= 65535:
+                port = int(arg)
+            else:
+                raise ValueError(f"Invalid option: {arg}")
         asyncio.run(connect(ip, port, reset))
+    except (ValueError, OSError, json.JSONDecodeError) as exc:
+        print(f"NetPilot: {exc}")
     except KeyboardInterrupt:
-        print("\nDisconnected.")
+        print("\\nDisconnected.")
     except Exception as exc:
-        print(f"\nConnection error: {exc}")
+        print(f"\\nConnection error: {exc}")
 
 
 if __name__ == "__main__":
