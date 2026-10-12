@@ -9,7 +9,7 @@
 **Connect to network devices in one command. Save time on repetitive logins. Keep credentials on your PC.**
 
 [![Windows](https://img.shields.io/badge/Windows-10%20%2F%2011-0078D4?logo=windows&logoColor=white)](https://github.com/karen101996/netpilot-releases)
-[![Latest version](https://img.shields.io/badge/version-1.2.5-2563eb)](version.json)
+[![Latest version](https://img.shields.io/badge/version-1.3.0-2563eb)](version.json)
 [![Update channel](https://img.shields.io/badge/updates-GitHub%20API-24292f?logo=github)](https://github.com/karen101996/netpilot-releases)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 
@@ -97,6 +97,14 @@ After a successful login, credentials can be saved for that IP address. Later co
 | `t 192.168.1.10 2323` | Connect using a custom Telnet port |
 | `t 192.168.1.10 --reset` | Remove the saved credentials for this IP and enter them again |
 | `np update` | Check for and install the latest version |
+| `t add office 192.168.1.10` | Save a device alias (v1.3.0+) |
+| `t list` | Show saved device aliases (v1.3.0+) |
+| `t search office` | Find devices by alias or IP (v1.3.0+) |
+| `t office` | Connect to a saved alias (v1.3.0+) |
+
+### Device address book (v1.3.0+)
+
+Add a device alias with `t add office 192.168.1.10`, view saved aliases using `t list`, search with `t search office`, and connect using `t office`. Aliases are stored separately from encrypted per-IP credentials. Existing `t IP` usage is unchanged.
 
 ### Updates
 
