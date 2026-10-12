@@ -1,5 +1,5 @@
 {
-  "version": "1.2.0",
+  "version": "1.2.1",
   "channel": "stable",
   "files": {
     "install.ps1": "b624660f13d7d8af6305d8ee8b4c445be4c9ce1d",
