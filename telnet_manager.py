@@ -33,6 +33,7 @@ ADDRESS_BOOK = BASE / "devices.json"
 RESERVED = {"add", "list", "search", "help", "ping", "backup", "history", "update", "doctor"}
 
 PROTOCOLS = BASE / "device_protocols.json"
+SSH_USERS = BASE / "ssh_users.json"
 LAUNCHER_DIR = Path.home() / "bin"
 WINDOWS_COMMANDS = {"cmd", "powershell", "pwsh", "explorer", "control", "regedit",
                     "notepad", "calc", "taskmgr", "services", "msconfig", "mstsc",
@@ -57,6 +58,30 @@ def load_protocols():
                                            for k, v in data.items()):
         raise ValueError("Invalid device protocols")
     return data
+
+def load_ssh_users():
+    if not SSH_USERS.exists():
+        return {}
+    data = json.loads(SSH_USERS.read_text(encoding="utf-8"))
+    if not isinstance(data, dict):
+        raise ValueError("Invalid SSH user settings")
+    return data
+
+def validate_ssh_user(username):
+    if not re.fullmatch(r"[A-Za-z0-9_.-]{1,64}", username):
+        raise ValueError("Invalid SSH username")
+    return username
+
+def edit_ssh_user(alias, username):
+    alias = alias.lower()
+    if alias not in load_devices():
+        raise ValueError(f"Unknown device: {alias}")
+    if load_protocols().get(alias, "telnet") != "ssh":
+        raise ValueError("SSH username can only be set for SSH devices")
+    users = load_ssh_users()
+    users[alias] = validate_ssh_user(username)
+    _save_json(SSH_USERS, users)
+    print(f"SSH login for {alias}: {username}")
 
 def _save_json(path, data):
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -100,11 +125,15 @@ def _create_launcher(alias, protocol):
         handle.write(script)
     return launcher
 
-def add_device(alias, ip, protocol="telnet"):
+def add_device(alias, ip, protocol="telnet", username=None):
     alias = alias.lower()
     ipaddress.ip_address(ip)
     if protocol not in ("telnet", "ssh"):
         raise ValueError("Protocol must be telnet or ssh")
+    if protocol == "ssh":
+        username = validate_ssh_user(username or "admin")
+    elif username is not None:
+        raise ValueError("Username is only supported for SSH")
     devices = load_devices()
     if alias in devices:
         raise ValueError(f"Alias '{alias}' already exists for {devices[alias]}; choose another name")
@@ -116,6 +145,10 @@ def add_device(alias, ip, protocol="telnet"):
         protocols[alias] = protocol
         _save_json(ADDRESS_BOOK, devices)
         _save_json(PROTOCOLS, protocols)
+        if protocol == "ssh":
+            users = load_ssh_users()
+            users[alias] = username
+            _save_json(SSH_USERS, users)
     except Exception:
         launcher.unlink(missing_ok=True)
         raise
@@ -515,7 +548,8 @@ def netpilot_help():
         ]),
         (m["devices"], [
             ("t add NAME IP", m["add_t"]),
-            ("s add NAME IP", m["add_s"]),
+            ("s add NAME IP [LOGIN]", m["add_s"]),
+            ("s edit NAME LOGIN", m["user"]),
             ("t list / s list", m["list"]),
             ("t search QUERY", m["search"]),
             ("t NAME / s NAME", m["winr"]),
@@ -530,7 +564,7 @@ def netpilot_help():
             ("t 192.168.1.10", "Telnet"),
             ("s 192.168.88.1", "SSH"),
             ("t add office 192.168.1.10", "office"),
-            ("s add router 192.168.88.1", "router"),
+            ("s add router 192.168.88.1 admin", "router"),
             ("Win+R: office", "Telnet"),
             ("Win+R: router", "SSH"),
         ]),
@@ -592,7 +626,7 @@ def main():
         np_main(args[1:])
         return
     if not args or args[0].lower() in ("help", "--help", "-h"):
-        print("NetPilot: t IP [PORT] [--reset] | s IP [PORT] [--user LOGIN] | t/s ALIAS | t/s add NAME IP | t/s list | t/s search QUERY")
+        print("NetPilot: t IP [PORT] [--reset] | s IP [PORT] [--user LOGIN] | t/s ALIAS | t/s add NAME IP [LOGIN] | s edit NAME LOGIN | t/s list | t/s search QUERY")
         return
     if args == ["--sync-launchers"]:
         sync_launchers()
@@ -607,9 +641,15 @@ def main():
     command = args[0].lower()
     try:
         if command == "add":
+            if len(args) not in ((3, 4) if ssh_mode else (3,)):
+                raise ValueError("Usage: s add NAME IP [LOGIN]" if ssh_mode else "Usage: t add NAME IP")
+            add_device(args[1], args[2], "ssh" if ssh_mode else "telnet",
+                       args[3] if len(args) == 4 else None)
+            return
+        if command == "edit" and ssh_mode:
             if len(args) != 3:
-                raise ValueError("Usage: t add NAME IP")
-            add_device(args[1], args[2], "ssh" if ssh_mode else "telnet")
+                raise ValueError("Usage: s edit NAME LOGIN")
+            edit_ssh_user(args[1], args[2])
             return
         if command == "list":
             if len(args) != 1:
@@ -642,6 +682,7 @@ def main():
             else:
                 raise ValueError(f"Invalid option: {arg}")
         if ssh_mode:
+            username = username or load_ssh_users().get(args[0].lower(), "admin")
             ssh_connect(ip, port, username)
         else:
             asyncio.run(connect(ip, port, reset))
