@@ -5,7 +5,7 @@ $root = Join-Path $env:LOCALAPPDATA 'NetPilot'
 $staging = Join-Path ([IO.Path]::GetTempPath()) ('netpilot-' + [guid]::NewGuid().ToString('N'))
 function Download-ReleaseFile([string]$file, [string]$path) {
   $headers = @{ 'User-Agent' = 'NetPilot-Updater'; 'Accept' = 'application/vnd.github+json' }
-  $response = Invoke-RestMethod -Uri "$apiBase/$file" -Headers $headers -TimeoutSec 30
+  $response = Invoke-RestMethod -Uri ("$apiBase/$file" + "?ref=main&nocache=" + [DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()) -Headers $headers -TimeoutSec 30
   if (-not $response.content -or $response.encoding -ne 'base64') {
     throw "GitHub API did not return base64 content for $file"
   }
