@@ -1,16 +1,16 @@
 {
-  "version": "1.4.3",
+  "version": "1.4.4",
   "channel": "stable",
   "files": {
     "install.ps1": "9ac10ed557004e02974b8ba68e719840081c0cb0",
-    "telnet_manager.py": "a390f323a07e83b62c1d6f4cdd0acac62b3ee022",
+    "telnet_manager.py": "83cd4e6cb52a224d417d27aa35174dbf8f1daea6",
     "requirements.txt": "259fdb0f641f53b43bef198a96b2083c7ba6fc53",
     "update.ps1": "6d26ef4ded54d12323f74b698d4174160978e5c3",
     "ssh_password.py": "d085da1adfb8cbf2a2de324acafff2ce4664c14f"
   },
   "changes": [
-    "SSH passwords saved securely with Windows DPAPI",
-    "Automatic SSH login with saved passwords",
-    "SSH host-key verification"
+    "Reset a saved SSH password with s NAME --reset",
+    "Re-enter and securely save the new password",
+    "Other device passwords remain unchanged"
   ]
 }
