@@ -491,7 +491,7 @@ def _help_color(text, color):
                 return text
         except (AttributeError, OSError):
             return text
-    return f"\\033[{color}m{text}\\033[0m"
+    return f"\x1b[{color}m{text}\x1b[0m"
 
 
 def netpilot_help():
