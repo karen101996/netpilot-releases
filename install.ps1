@@ -72,6 +72,131 @@ if ($LASTEXITCODE -ne 0) { throw 'Failed to create Python environment.' }
 $venvPython = Join-Path $venv 'Scripts\python.exe'
 & $venvPython -m pip install --disable-pip-version-check -r (Join-Path $PSScriptRoot 'requirements.txt')
 if ($LASTEXITCODE -ne 0) { throw 'Dependency installation failed; existing installation was not switched.' }
+# Legacy updaters (v1.2.x) do not stage ssh_password.py. Fetch only this missing
+# release file, and verify its Git blob hash against the staged manifest.
+$sshModule = Join-Path $PSScriptRoot 'ssh_password.py'
+if (-not (Test-Path $sshModule)) {
+  $manifestPath = Join-Path $PSScriptRoot 'version.json'
+  if (-not (Test-Path $manifestPath)) { throw 'Missing release manifest; cannot verify ssh_password.py.' }
+  $manifest = Get-Content $manifestPath -Raw | ConvertFrom-Json
+  $expectedSha = [string]$manifest.files.'ssh_password.py'
+  if ($expectedSha -notmatch '^[0-9a-f]{40}
+if ($LASTEXITCODE -ne 0) { throw 'Python syntax check failed; existing installation was not switched.' }
+
+# Back up existing legacy script and current RAVLAN script before replacing either.
+$stamp = Get-Date -Format 'yyyyMMdd-HHmmss'
+$current = Join-Path $root 'telnet_manager.py'
+if (Test-Path $current) {
+  Copy-Item $current (Join-Path $backupDir "telnet_manager-$stamp.py") -Force
+}
+if (Test-Path $legacy) {
+  Copy-Item $legacy (Join-Path $backupDir "legacy-t-$stamp.bat") -Force
+}
+Copy-Item (Join-Path $PSScriptRoot 'telnet_manager.py') $current -Force
+Copy-Item (Join-Path $PSScriptRoot 'ssh_password.py') (Join-Path $root 'ssh_password.py') -Force
+Copy-Item (Join-Path $PSScriptRoot 'version.json') (Join-Path $root 'version.json') -Force
+Copy-Item (Join-Path $PSScriptRoot 'update.ps1') (Join-Path $root 'update.ps1') -Force
+
+$cmd = '@echo off' + "`r`n" +
+  'title Telnet %~1' + "`r`n" +
+  '"%LOCALAPPDATA%\NetPilot\.venv\Scripts\python.exe" "%LOCALAPPDATA%\NetPilot\telnet_manager.py" %*' + "`r`n" +
+  'if errorlevel 1 pause' + "`r`n"
+Set-Content -Path (Join-Path $bin 't.cmd') -Value $cmd -Encoding ASCII
+$sshCmd = '@echo off' + "`r`n" +
+  'title SSH %~1' + "`r`n" +
+  '"%LOCALAPPDATA%\NetPilot\.venv\Scripts\python.exe" "%LOCALAPPDATA%\NetPilot\telnet_manager.py" --ssh %*' + "`r`n" +
+  'if errorlevel 1 pause' + "`r`n"
+Set-Content -Path (Join-Path $bin 's.cmd') -Value $sshCmd -Encoding ASCII
+& $venvPython $current --sync-launchers
+if ($LASTEXITCODE -ne 0) { Write-Warning 'Some existing device launchers could not be synchronized.' }
+$npLines = @(
+  '@echo off'
+  'if /I "%~1"=="update" goto :update'
+  '"%LOCALAPPDATA%\NetPilot\.venv\Scripts\python.exe" "%LOCALAPPDATA%\NetPilot\telnet_manager.py" --rv %*'
+  'exit /b %errorlevel%'
+  ':update'
+  'powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "%LOCALAPPDATA%\NetPilot\update.ps1"'
+  'exit /b %errorlevel%'
+)
+$npCmd = ($npLines -join "`r`n") + "`r`n"
+Set-Content -Path (Join-Path $bin 'rv.cmd') -Value $npCmd -Encoding ASCII
+Set-Content -Path (Join-Path $bin 'np.cmd') -Value $npCmd -Encoding ASCII
+
+# A t.bat in the user profile takes precedence when CMD starts there.
+# Preserve it, then forward it to the newly installed launcher.
+$userLegacy = Join-Path $env:USERPROFILE 't.bat'
+if (Test-Path $userLegacy) {
+  $userLegacyText = Get-Content $userLegacy -Raw
+  if ($userLegacyText -match 'TelnetManager[\\/]telnet_manager\.py') {
+    Copy-Item $userLegacy (Join-Path $backupDir "user-t-$stamp.bat") -Force
+    $forwardUser = '@echo off' + "`r`n" +
+      'call "%USERPROFILE%\bin\t.cmd" %*' + "`r`n"
+    Set-Content -Path $userLegacy -Value $forwardUser -Encoding ASCII
+    Write-Host 'Migrated user-profile t.bat; backup saved.' -ForegroundColor Green
+  } else {
+    Write-Warning 'User-profile t.bat is unrecognized and was left unchanged.'
+  }
+}
+
+# The legacy Windows folder is earlier on PATH. Repoint its existing t.bat only
+# if it is our recognizable old launcher. Unknown launchers are not overwritten.
+if (Test-Path $legacy) {
+  $legacyText = Get-Content $legacy -Raw
+  if ($legacyText -match 'TelnetManager[\\/]telnet_manager\.py|TelnetManager\\telnet_manager\.py') {
+    try {
+      $forward = '@echo off' + "`r`n" +
+        'call "%USERPROFILE%\bin\t.cmd" %*' + "`r`n"
+      Set-Content -Path $legacy -Value $forward -Encoding ASCII -ErrorAction Stop
+      Write-Host 'Migrated existing C:\Windows\t.bat; backup saved.' -ForegroundColor Green
+    } catch {
+      Write-Warning 'Could not update C:\Windows\t.bat (administrator permission may be needed).'
+      Write-Warning 'Old t command may still take priority. No legacy file was deleted.'
+    }
+  } else {
+    Write-Warning 'Existing C:\Windows\t.bat is not recognized. Kept untouched.'
+  }
+}
+
+$userPath = [Environment]::GetEnvironmentVariable('Path', 'User')
+$parts = @($userPath -split ';' | Where-Object { $_ })
+if ($parts -notcontains $bin) {
+  [Environment]::SetEnvironmentVariable('Path', (($parts + $bin) -join ';'), 'User')
+}
+# Check the installed script and report actual resolution separately.
+& $venvPython -m py_compile $current
+if ($LASTEXITCODE -ne 0) { throw 'Installed script failed verification.' }
+Write-Host 'RAVLAN installed. Credentials remain in %USERPROFILE%\TelnetManager\credentials.json.' -ForegroundColor Green
+Write-Host 'Open a NEW CMD and run: rv help'
+Write-Host 'Then connect using: t 10.137.1.19'
+if (Test-Path $userLegacy) {
+  $checkUser = Get-Content $userLegacy -Raw
+  if ($checkUser -notmatch 'call\s+"%USERPROFILE%\\bin\\t\.cmd"') {
+    Write-Warning 'User-profile t.bat may override RAVLAN.'
+  }
+}
+if (Test-Path $legacy) {
+  $legacyText = Get-Content $legacy -Raw
+  if ($legacyText -notmatch 'call\s+"%USERPROFILE%\\bin\\t\.cmd"') {
+    Write-Warning 'Legacy t.bat may still be selected. Review where t before switching.'
+  }
+}
+) { throw 'Missing or invalid ssh_password.py checksum.' }
+  Write-Host 'Legacy updater detected. Downloading verified SSH module...' -ForegroundColor Yellow
+  $headers = @{ 'User-Agent' = 'RAVLAN-Installer'; 'Accept' = 'application/vnd.github+json' }
+  $url = 'https://api.github.com/repos/karen101996/ravlan-releases/contents/ssh_password.py?ref=main'
+  $response = Invoke-RestMethod -Uri $url -Headers $headers -TimeoutSec 30
+  if ($response.encoding -ne 'base64' -or -not $response.content) { throw 'Invalid SSH module download.' }
+  $bytes = [Convert]::FromBase64String(($response.content -replace '\s', ''))
+  $prefix = [Text.Encoding]::ASCII.GetBytes("blob $($bytes.Length)" + [char]0)
+  $buffer = New-Object byte[] ($prefix.Length + $bytes.Length)
+  [Array]::Copy($prefix, 0, $buffer, 0, $prefix.Length)
+  [Array]::Copy($bytes, 0, $buffer, $prefix.Length, $bytes.Length)
+  $sha1 = [Security.Cryptography.SHA1]::Create()
+  try { $actualSha = ([BitConverter]::ToString($sha1.ComputeHash($buffer))).Replace('-', '').ToLowerInvariant() }
+  finally { $sha1.Dispose() }
+  if ($actualSha -ne $expectedSha) { throw 'SSH module checksum mismatch; installation cancelled.' }
+  [IO.File]::WriteAllBytes($sshModule, $bytes)
+}
 & $venvPython -m py_compile (Join-Path $PSScriptRoot 'telnet_manager.py') (Join-Path $PSScriptRoot 'ssh_password.py')
 if ($LASTEXITCODE -ne 0) { throw 'Python syntax check failed; existing installation was not switched.' }
 
