@@ -1,16 +1,16 @@
 {
-  "version": "1.5.1",
+  "version": "1.5.2",
   "channel": "stable",
   "files": {
-    "install.ps1": "9b2016aa84b762ed0b1eeb51b6350f2482a6ea27",
+    "install.ps1": "0c2bc8fba715248a241b00361cb413cc9bf22bff",
     "telnet_manager.py": "d806ec65bdd804ceaaefd3b8ec60b08b6baf8671",
     "requirements.txt": "259fdb0f641f53b43bef198a96b2083c7ba6fc53",
     "update.ps1": "b572761bef1ffa74e06dc371292117d88cd480f5",
     "ssh_password.py": "d085da1adfb8cbf2a2de324acafff2ce4664c14f"
   },
   "changes": [
-    "Fix upgrade from older 1.2.x installers that omit ssh_password.py",
-    "Download missing SSH module with checksum verification",
-    "Preserve saved credentials and legacy commands"
+    "Fix malformed PowerShell installer in v1.5.1",
+    "Restore legacy 1.2.x updater compatibility with verified SSH module download",
+    "Add PowerShell syntax validation to release CI"
   ]
 }
