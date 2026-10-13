@@ -1,3 +1,9 @@
+## v1.5.1 — Legacy upgrade fix
+
+- Fix upgrades from older RAVLAN/NetPilot v1.2.x installations: the old updater does not download `ssh_password.py`.
+- Installer now securely retrieves the missing module and validates its Git blob SHA against the release manifest.
+- Existing aliases and saved credentials remain unchanged.
+
 ## v1.5.0 — RAVLAN rebrand
 
 - Renamed the product to **RAVLAN** and introduced the `rv` management command.
