@@ -6,7 +6,7 @@ on:
       version:
         description: 'Release version (example: 1.2.5)'
         required: true
-        default: '1.5.1'
+        default: '1.5.2'
 
 permissions:
   contents: write
@@ -39,6 +39,18 @@ jobs:
           PY
       - name: Check Python syntax
         run: python3 -m py_compile telnet_manager.py ssh_password.py
+      - name: Validate PowerShell installer syntax
+        shell: pwsh
+        run: |
+          foreach ($path in @('install.ps1', 'update.ps1')) {
+            $tokens = $null
+            $errors = $null
+            [void][System.Management.Automation.Language.Parser]::ParseFile((Resolve-Path $path), [ref]$tokens, [ref]$errors)
+            if ($errors.Count -gt 0) {
+              $errors | ForEach-Object { Write-Error $_.Message }
+              throw "PowerShell parser errors in $path"
+            }
+          }
       - name: Verify RAVLAN launchers
         shell: bash
         run: |
