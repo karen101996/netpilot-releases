@@ -1,3 +1,9 @@
+## v1.5.2 — Installer syntax fix
+
+- Repair the malformed PowerShell installer in v1.5.1.
+- Keep legacy v1.2.x updater compatibility and checksum-verified SSH module retrieval.
+- Add PowerShell parser validation to CI before release publication.
+
 ## v1.5.1 — Legacy upgrade fix
 
 - Fix upgrades from older RAVLAN/NetPilot v1.2.x installations: the old updater does not download `ssh_password.py`.
