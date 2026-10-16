@@ -1,3 +1,8 @@
+## v1.5.4 — TP-Link Telnet login compatibility
+
+- Recognize `User:` prompts in addition to `Login:` and `Username:`.
+- Automatically continue saved-credential authentication on compatible TP-Link devices.
+
 ## v1.5.3 — Telnet navigation keys
 
 - Forward Up/Down and Left/Right arrow keys to the remote Telnet CLI.
