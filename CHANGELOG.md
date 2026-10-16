@@ -1,3 +1,9 @@
+## v1.5.9 — TP-Link enable diagnostics and credential persistence
+
+- Save credentials immediately after successful Telnet login, independently of optional enable mode.
+- Give TP-Link additional settling time after a fresh prompt before automatic enable.
+- Print a TP-Link enable diagnostic marker to identify the failing step.
+
 ## v1.5.8 — TP-Link enable prompt synchronization
 
 - Send an empty line after TP-Link's login notification and wait for a fresh CLI prompt before automatic `enable`.
