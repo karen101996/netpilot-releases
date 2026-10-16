@@ -1,3 +1,8 @@
+## v1.5.5 — TP-Link CLI prompt detection
+
+- Recognize TP-Link prompts followed immediately by timestamped login events.
+- Preserve standard network CLI prompt handling.
+
 ## v1.5.4 — TP-Link Telnet login compatibility
 
 - Recognize `User:` prompts in addition to `Login:` and `Username:`.
