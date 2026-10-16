@@ -194,7 +194,7 @@ PROMPTS = {
     "login": r"(?:login|username|user)\s*:\s*$",
     "password": r"(?:password|passwd)\s*:\s*$",
     "failed": r"(?:login failed|authentication failed|incorrect|access denied|login incorrect)",
-    "prompt": r"(?m)^[^\r\n]{1,120}[>#]\s*$",
+    "prompt": r"(?m)^[A-Za-z0-9][A-Za-z0-9_.()/-]{0,119}[>#](?=\s*(?:$|#[0-9]{4}-[0-9]{2}-[0-9]{2}\b))",
 }
 
 
