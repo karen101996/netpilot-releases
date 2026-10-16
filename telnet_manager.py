@@ -304,7 +304,20 @@ async def interactive(reader, writer):
         while True:
             char = await asyncio.to_thread(msvcrt.getwch)
             if char in ("\x00", "\xe0"):
-                await asyncio.to_thread(msvcrt.getwch)
+                scan = await asyncio.to_thread(msvcrt.getwch)
+                keys = {
+                    "H": "\x1b[A",
+                    "P": "\x1b[B",
+                    "M": "\x1b[C",
+                    "K": "\x1b[D",
+                    "G": "\x1b[H",
+                    "O": "\x1b[F",
+                    "S": "\x1b[3~",
+                }
+                sequence = keys.get(scan)
+                if sequence:
+                    writer.write(sequence)
+                    await writer.drain()
                 continue
             if char == "\x03":
                 return
