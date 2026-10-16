@@ -194,6 +194,7 @@ PROMPTS = {
     "login": r"(?:login|username|user)\s*:\s*$",
     "password": r"(?:password|passwd)\s*:\s*$",
     "failed": r"(?:login failed|authentication failed|incorrect|access denied|login incorrect)",
+    "login_success": r"\[User\]/3/Login the CLI by\s+[^\r\n]+\s+on\s+vty\d+",
     "prompt": r"(?m)^[A-Za-z0-9][A-Za-z0-9_.()/-]{0,119}[>#](?=\s*(?:$|#[0-9]{4}-[0-9]{2}-[0-9]{2}\b))",
 }
 
@@ -393,7 +394,12 @@ async def connect(ip, port=23, reset=False):
             result = await wait_for(reader, {
                 "failed": PROMPTS["failed"], "login": PROMPTS["login"],
                 "prompt": PROMPTS["prompt"],
+                "login_success": PROMPTS["login_success"],
             })
+        if result == "login_success":
+            # TP-Link may print a login event directly after its CLI prompt.
+            # A device-generated success event confirms authentication.
+            result = "prompt"
         if result in ("failed", "login"):
             print(f"\nAuthentication failed. Run: t {ip} --reset")
             return
