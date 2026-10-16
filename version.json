@@ -1,15 +1,16 @@
 {
-  "version": "1.5.8",
+  "version": "1.5.9",
   "channel": "stable",
   "files": {
     "install.ps1": "0c2bc8fba715248a241b00361cb413cc9bf22bff",
-    "telnet_manager.py": "aedb7c7b4425b3f2bbe0d9ce3630e5af696091d1",
+    "telnet_manager.py": "32d06363aa7394c6b285407a4bd46fc5bd1eb33c",
     "requirements.txt": "259fdb0f641f53b43bef198a96b2083c7ba6fc53",
     "update.ps1": "b572761bef1ffa74e06dc371292117d88cd480f5",
     "ssh_password.py": "d085da1adfb8cbf2a2de324acafff2ce4664c14f"
   },
   "changes": [
-    "Request and confirm a fresh TP-Link CLI prompt before sending automatic enable",
-    "Avoid relying on fixed login-notification delays"
+    "Save verified Telnet credentials before optional enable mode",
+    "Allow TP-Link command editor to settle after a fresh prompt",
+    "Show when TP-Link automatic enable is being sent"
   ]
 }
