@@ -1,3 +1,9 @@
+## v1.5.6 — TP-Link interactive login
+
+- Detect the TP-Link `Login the CLI by ... on vty...` success event after authentication.
+- Enter interactive mode when the device confirms a successful login, even if its prompt is interleaved with a timestamped event.
+- Preserve existing prompt matching and authentication failure checks.
+
 ## v1.5.5 — TP-Link CLI prompt detection
 
 - Recognize TP-Link prompts followed immediately by timestamped login events.
