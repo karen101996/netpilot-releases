@@ -1,15 +1,15 @@
 {
-  "version": "1.5.3",
+  "version": "1.5.4",
   "channel": "stable",
   "files": {
     "install.ps1": "0c2bc8fba715248a241b00361cb413cc9bf22bff",
-    "telnet_manager.py": "c8a5a29d689e27f2251371fc2399c7efd5eb4a52",
+    "telnet_manager.py": "57e994a9147768eab36955b1217911fba2ce7532",
     "requirements.txt": "259fdb0f641f53b43bef198a96b2083c7ba6fc53",
     "update.ps1": "b572761bef1ffa74e06dc371292117d88cd480f5",
     "ssh_password.py": "d085da1adfb8cbf2a2de324acafff2ce4664c14f"
   },
   "changes": [
-    "Forward arrow keys to Telnet devices for command history and cursor movement",
-    "Forward Home, End, and Delete navigation keys"
+    "Recognize TP-Link Telnet User: login prompts",
+    "Preserve existing Login: and Username: compatibility"
   ]
 }
