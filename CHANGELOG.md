@@ -1,3 +1,8 @@
+## v1.5.7 — TP-Link automatic enable timing
+
+- Add a short settling delay before automatic `enable` after TP-Link's login event.
+- Leave the enable timing for other supported network equipment unchanged.
+
 ## v1.5.6 — TP-Link interactive login
 
 - Detect the TP-Link `Login the CLI by ... on vty...` success event after authentication.
