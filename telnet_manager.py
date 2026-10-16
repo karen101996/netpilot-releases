@@ -407,6 +407,11 @@ async def connect(ip, port=23, reset=False):
         if result != "prompt":
             raise RuntimeError("Could not confirm login")
 
+        # A confirmed normal CLI login is sufficient to save credentials.
+        # Enable mode is optional and must not prevent credentials being saved.
+        if not entry["saved"]:
+            save_credentials(ip, entry)
+
         if entry["use_enable"]:
             if tp_link_login_event:
                 # TP-Link emits a login event while its CLI prompt is still
@@ -415,6 +420,10 @@ async def connect(ip, port=23, reset=False):
                 await asyncio.sleep(0.3)
                 await send_line(writer, "")
                 await wait_for(reader, {"prompt": PROMPTS["prompt"]}, timeout=8)
+                # The prompt can be matched before TP-Link has finished
+                # preparing its command editor. Wait for it to settle.
+                await asyncio.sleep(0.7)
+                print("\n[TP-Link] Sending enable...", flush=True)
             await send_line(writer, "enable")
             result = await wait_for(reader, {
                 "password": PROMPTS["password"], "prompt": PROMPTS["prompt"],
@@ -432,8 +441,6 @@ async def connect(ip, port=23, reset=False):
                 print("\nEnable authentication failed.")
                 return
 
-        if not entry["saved"]:
-            save_credentials(ip, entry)
         await send_line(writer, "")
         await interactive(reader, writer)
     finally:
