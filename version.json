@@ -1,16 +1,15 @@
 {
-  "version": "1.5.6",
+  "version": "1.5.7",
   "channel": "stable",
   "files": {
     "install.ps1": "0c2bc8fba715248a241b00361cb413cc9bf22bff",
-    "telnet_manager.py": "ebc203cb9fe7fdadd5aecba024ce3f156ea27e5e",
+    "telnet_manager.py": "6988552f1a4da810bb8f34c3dae8970a8f4167e2",
     "requirements.txt": "259fdb0f641f53b43bef198a96b2083c7ba6fc53",
     "update.ps1": "b572761bef1ffa74e06dc371292117d88cd480f5",
     "ssh_password.py": "d085da1adfb8cbf2a2de324acafff2ce4664c14f"
   },
   "changes": [
-    "Recognize TP-Link's authenticated CLI login event after password submission",
-    "Enter interactive Telnet mode when the device confirms successful login",
-    "Keep standard prompt detection and authentication failure handling"
+    "Wait for TP-Link login notification to finish before automatically sending enable",
+    "Avoid affecting enable timing on BDCOM, SNR, and Cisco"
   ]
 }
