@@ -1,3 +1,8 @@
+## v1.5.8 — TP-Link enable prompt synchronization
+
+- Send an empty line after TP-Link's login notification and wait for a fresh CLI prompt before automatic `enable`.
+- Keep other devices' enable flow unchanged.
+
 ## v1.5.7 — TP-Link automatic enable timing
 
 - Add a short settling delay before automatic `enable` after TP-Link's login event.
