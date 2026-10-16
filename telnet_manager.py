@@ -191,7 +191,7 @@ def resolve_device(target):
         return devices[target.lower()]
 
 PROMPTS = {
-    "login": r"(?:login|username)\s*:\s*$",
+    "login": r"(?:login|username|user)\s*:\s*$",
     "password": r"(?:password|passwd)\s*:\s*$",
     "failed": r"(?:login failed|authentication failed|incorrect|access denied|login incorrect)",
     "prompt": r"(?m)^[^\r\n]{1,120}[>#]\s*$",
