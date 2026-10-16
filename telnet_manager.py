@@ -409,9 +409,12 @@ async def connect(ip, port=23, reset=False):
 
         if entry["use_enable"]:
             if tp_link_login_event:
-                # TP-Link CLI consumes the first character if enable is sent
-                # while its login notification is still being printed.
-                await asyncio.sleep(1.0)
+                # TP-Link emits a login event while its CLI prompt is still
+                # being initialized. Request and confirm a fresh prompt before
+                # sending the first privileged command.
+                await asyncio.sleep(0.3)
+                await send_line(writer, "")
+                await wait_for(reader, {"prompt": PROMPTS["prompt"]}, timeout=8)
             await send_line(writer, "enable")
             result = await wait_for(reader, {
                 "password": PROMPTS["password"], "prompt": PROMPTS["prompt"],
