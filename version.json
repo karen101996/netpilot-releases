@@ -1,16 +1,15 @@
 {
-  "version": "1.5.2",
+  "version": "1.5.3",
   "channel": "stable",
   "files": {
     "install.ps1": "0c2bc8fba715248a241b00361cb413cc9bf22bff",
-    "telnet_manager.py": "d806ec65bdd804ceaaefd3b8ec60b08b6baf8671",
+    "telnet_manager.py": "c8a5a29d689e27f2251371fc2399c7efd5eb4a52",
     "requirements.txt": "259fdb0f641f53b43bef198a96b2083c7ba6fc53",
     "update.ps1": "b572761bef1ffa74e06dc371292117d88cd480f5",
     "ssh_password.py": "d085da1adfb8cbf2a2de324acafff2ce4664c14f"
   },
   "changes": [
-    "Fix malformed PowerShell installer in v1.5.1",
-    "Restore legacy 1.2.x updater compatibility with verified SSH module download",
-    "Add PowerShell syntax validation to release CI"
+    "Forward arrow keys to Telnet devices for command history and cursor movement",
+    "Forward Home, End, and Delete navigation keys"
   ]
 }
