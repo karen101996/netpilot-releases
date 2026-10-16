@@ -1,15 +1,15 @@
 {
-  "version": "1.5.7",
+  "version": "1.5.8",
   "channel": "stable",
   "files": {
     "install.ps1": "0c2bc8fba715248a241b00361cb413cc9bf22bff",
-    "telnet_manager.py": "6988552f1a4da810bb8f34c3dae8970a8f4167e2",
+    "telnet_manager.py": "aedb7c7b4425b3f2bbe0d9ce3630e5af696091d1",
     "requirements.txt": "259fdb0f641f53b43bef198a96b2083c7ba6fc53",
     "update.ps1": "b572761bef1ffa74e06dc371292117d88cd480f5",
     "ssh_password.py": "d085da1adfb8cbf2a2de324acafff2ce4664c14f"
   },
   "changes": [
-    "Wait for TP-Link login notification to finish before automatically sending enable",
-    "Avoid affecting enable timing on BDCOM, SNR, and Cisco"
+    "Request and confirm a fresh TP-Link CLI prompt before sending automatic enable",
+    "Avoid relying on fixed login-notification delays"
   ]
 }
