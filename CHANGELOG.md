@@ -1,3 +1,9 @@
+## v1.5.3 — Telnet navigation keys
+
+- Forward Up/Down and Left/Right arrow keys to the remote Telnet CLI.
+- Forward Home, End, and Delete keys using terminal escape sequences.
+- Remote device support for command history and editing may vary.
+
 ## v1.5.2 — Installer syntax fix
 
 - Repair the malformed PowerShell installer in v1.5.1.
