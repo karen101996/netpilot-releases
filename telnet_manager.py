@@ -396,9 +396,10 @@ async def connect(ip, port=23, reset=False):
                 "prompt": PROMPTS["prompt"],
                 "login_success": PROMPTS["login_success"],
             })
-        if result == "login_success":
-            # TP-Link may print a login event directly after its CLI prompt.
-            # A device-generated success event confirms authentication.
+        tp_link_login_event = result == "login_success"
+        if tp_link_login_event:
+            # The event can arrive before the trailing login-log text is complete.
+            # Let the device finish printing before sending privileged commands.
             result = "prompt"
         if result in ("failed", "login"):
             print(f"\nAuthentication failed. Run: t {ip} --reset")
@@ -407,6 +408,10 @@ async def connect(ip, port=23, reset=False):
             raise RuntimeError("Could not confirm login")
 
         if entry["use_enable"]:
+            if tp_link_login_event:
+                # TP-Link CLI consumes the first character if enable is sent
+                # while its login notification is still being printed.
+                await asyncio.sleep(1.0)
             await send_line(writer, "enable")
             result = await wait_for(reader, {
                 "password": PROMPTS["password"], "prompt": PROMPTS["prompt"],
